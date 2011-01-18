@@ -1,0 +1,163 @@
+/*if (myApplicationlister.getApplicationsCount()>=1){
+		myLaunchctl.setKeepAlive(true);
+		
+		CFStringRef tmpNameCFString = myApplicationlister.getApplicationName(0);
+		//CFShow(CFSTR("launching : "));
+		//CFShow(tmpNameCFString);
+		
+		CFStringRef tmpPathCFString = myApplicationlister.getApplicationPath(0);
+		//CFShow(CFSTR("from : "));
+		//CFShow(tmpPathCFString);
+		
+		
+		myLaunchctl.setProcessPath( tmpPathCFString );
+		myLaunchctl.setProcessLabel(CFSTR("[01]org.monolithe.TextEdit"));
+		myLaunchctl.setThrottleInterval(2);
+		myLaunchctl.validate(CFSTR("tmp.plist"));
+		
+		myLaunchctl.loadProcess("tmp.plist");
+		
+		//CFReleaseIfNotNULL(tmpNameCFString); //why does this crash (out of scope ?)
+		//CFRelease(tmpPathCFString);
+							
+	}*/
+	
+	/*myApplicationlister.printApplicationList();
+	myApplicationlister.
+	if(myLaunchctl.isProcessRunning("[].net.010175.1")) printf("[01]net.010175.1 is running\n");
+	
+	sleep(5);
+	
+	myLaunchctl.unloadProcess("tmp.plist");
+	*/
+	
+	 /*
+	  myLaunchctl.setKeepAlive(true);
+	 myLaunchctl.setThrottleInterval(2);
+	 myLaunchctl.setProcessPath(CFSTR("/System/Library/CoreServices/Finder.app/Contents/MacOS/Finder"));
+	 myLaunchctl.setProcessLabel(CFSTR("com.apple.Finder"));
+	 myLaunchctl.validate();
+	 */
+	
+	/*
+	 myLaunchctl.setKeepAlive(true);
+	 myLaunchctl.setThrottleInterval(2);
+	 myLaunchctl.setProcessPath(CFSTR("/Applications/%5BNet%5D/Firefox.app/Contents/MacOS/firefox"));
+	 myLaunchctl.setProcessLabel(CFSTR("[0x0-0x69069].org.mozilla.firefox"));
+	 myLaunchctl.validate();
+	 myLaunchctl.unloadProcess("test.plist");
+	 */
+	
+	
+	//sleep(5);
+	
+	//myLaunchctl.loadProcess("/System/Library/LaunchAgents/com.apple.Finder.plist");
+	//myLaunchctl.stopProcess("[0x0-0x65065].com.apple.TextEdit");
+	
+	//TO.start();
+	
+	
+	
+	
+	
+	///// keyboard input
+	
+	// quit
+		if ((currentGetch == 27)) {
+			doLoop = 0;
+		}
+		
+		// refresh app list
+		if (currentGetch == 'r') { 
+			
+			myApplicationlister.updateApplicationsList();
+			
+			sendProcessListToWebConsoleThread.start();
+			
+			
+			
+			printf("%.2i:%.2i:%.2i Refresh Process List\n", timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec);
+			
+			
+		}
+		
+		if (currentGetch =='-') { // prev process
+			selectedProcessIndex = max(selectedProcessIndex-1,0);
+			
+		}
+		
+		
+		
+		if (currentGetch =='+') { // next process
+			selectedProcessIndex= min(selectedProcessIndex+1,myApplicationlister.getApplicationCount()-1);
+			
+		}
+		
+		if ((currentGetch =='q')||(currentGetch =='Q')) { // quit process
+			myLaunchctl.unloadProcess(PROCESS_PLIST_FILE_NAME); // unload current process
+			
+			activeProcessIndex = -1;
+			
+			sendProcessListToWebConsoleThread.start();
+			
+			
+		}
+		
+		if (currentGetch ==10) { // set process
+			if (selectedProcessIndex>-1){
+				
+				
+				CFStringRef tmpPathCFString = myApplicationlister.getApplicationPath(selectedProcessIndex);
+				
+				myLaunchctl.unloadProcess(PROCESS_PLIST_FILE_NAME); // unload current process
+				
+				// TODO: check if process is really unloaded and set a time out.
+				
+				sleep(2);											//wait 2 seconds
+				
+				myLaunchctl.setKeepAlive(true);
+				
+				myLaunchctl.setProcessPath( tmpPathCFString );
+				myLaunchctl.setProcessLabel(CFSTR("org.monolithe.process"));
+				myLaunchctl.setThrottleInterval(2);
+				myLaunchctl.validate(CFSTR(PROCESS_PLIST_FILE_NAME));
+				
+				myLaunchctl.loadProcess(PROCESS_PLIST_FILE_NAME);	// load new process
+				activeProcessIndex = selectedProcessIndex;
+				
+				
+				//sendProcessListToWebConsole();
+				sendProcessListToWebConsoleThread.start();
+				
+			}
+		}
+
+
+
+
+/////////// process
+
+
+ProcessSerialNumber psn = { 0, kCurrentProcess };
+	
+	//static const ProcessSerialNumber psn;
+	/*
+	 GetProcessForPID (
+		(long) childPID,
+		&psn
+	);
+	 */
+	
+	 GetProcessForPID (
+					  15949,
+					  &psn
+					  );
+	 
+	
+	printf("process sn is %i %i\n", (int)psn.highLongOfPSN, (int)psn.lowLongOfPSN);
+	OSErr er = SetFrontProcess(&psn);
+	printf("err is %i\r", er);
+
+
+
+
