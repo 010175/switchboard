@@ -58,5 +58,7 @@ int main (int argc, const char * argv[]);
 #include "curlSendProcessListThreadedObject.h"
 curlSendProcessListThreadedObject sendProcessListToWebConsoleThread;
 
+// osc
+OscSender sender;
 
 #endif

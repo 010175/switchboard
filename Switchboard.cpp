@@ -234,7 +234,6 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		// ping
 		if ( rm.getAddress() == "/monolithe/ping" )
 		{
-			OscSender sender;
 			sender.setup(rm.getRemoteIp(), _SENDER_PORT);// reset sender remote ip
 			
 			OscMessage sm;
@@ -310,7 +309,6 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		// send app list
 		if ( rm.getAddress() == "/monolithe/getprocesslist" )	
 		{
-			OscSender sender;
 			sender.setup(rm.getRemoteIp(), _SENDER_PORT);
 			
 			OscMessage sm;
@@ -352,7 +350,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		// send current process index
 		if ( rm.getAddress() == "/monolithe/getprocessindex" ) 
 		{
-			OscSender sender;
+		
 			sender.setup(rm.getRemoteIp(), _SENDER_PORT);// reset sender remote ip
 			
 			OscMessage sm;
@@ -367,7 +365,6 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		// stop current process
 		if ( rm.getAddress() == "/monolithe/stopprocess" ) 
 		{
-			OscSender sender;
 			sender.setup(rm.getRemoteIp(), _SENDER_PORT); // reset sender remote ip
 			
 			myLaunchd_wrapper.removeProcess(PROCESS_LABEL); // unload current process
