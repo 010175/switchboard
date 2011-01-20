@@ -107,7 +107,6 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 	}
 	
 	printf("Clalendar updated %i events\n", count);
-	
 	calendar_xml.Clear();
 	
 	return nmemb;
