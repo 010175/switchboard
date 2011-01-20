@@ -299,7 +299,7 @@
 							<real>243</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>49 50 1231 709 0 0 1280 778 </string>
+						<string>8 69 1231 709 0 0 1280 778 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -329,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>F066D17712E790EB00338418</string>
+										<string>F066D17D12E7EE1700338418</string>
 										<key>history</key>
 										<array>
 											<string>F024F73F10E8129900828192</string>
@@ -427,8 +427,8 @@
 											<string>F047AC4912E57877006C278F</string>
 											<string>F066D08B12E75CBE00338418</string>
 											<string>F066D17412E790EB00338418</string>
-											<string>F066D17512E790EB00338418</string>
-											<string>F066D17612E790EB00338418</string>
+											<string>F066D17B12E7EE1700338418</string>
+											<string>F066D17C12E7EE1700338418</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -442,7 +442,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {966, 663}}</string>
 								<key>RubberWindowFrame</key>
-								<string>49 50 1231 709 0 0 1280 778 </string>
+								<string>8 69 1231 709 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -462,7 +462,7 @@
 								<key>Frame</key>
 								<string>{{0, 668}, {966, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>49 50 1231 709 0 0 1280 778 </string>
+								<string>8 69 1231 709 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -630,7 +630,7 @@
 		<string>/Users/guillaume/Usine/monolithe/switchboard/Switchboard/Switchboard.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>49 50 1231 709 0 0 1280 778 </string>
+	<string>8 69 1231 709 0 0 1280 778 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>

@@ -176,6 +176,10 @@
 			F066D17512E790EB00338418 /* PBXTextBookmark */ = F066D17512E790EB00338418 /* PBXTextBookmark */;
 			F066D17612E790EB00338418 /* XCBuildMessageTextBookmark */ = F066D17612E790EB00338418 /* XCBuildMessageTextBookmark */;
 			F066D17712E790EB00338418 /* PBXTextBookmark */ = F066D17712E790EB00338418 /* PBXTextBookmark */;
+			F066D17A12E7ED3200338418 /* PBXTextBookmark */ = F066D17A12E7ED3200338418 /* PBXTextBookmark */;
+			F066D17B12E7EE1700338418 /* PBXTextBookmark */ = F066D17B12E7EE1700338418 /* PBXTextBookmark */;
+			F066D17C12E7EE1700338418 /* PBXTextBookmark */ = F066D17C12E7EE1700338418 /* PBXTextBookmark */;
+			F066D17D12E7EE1700338418 /* PBXTextBookmark */ = F066D17D12E7EE1700338418 /* PBXTextBookmark */;
 			F06F885912D578D400F2A7E5 = F06F885912D578D400F2A7E5 /* PBXTextBookmark */;
 			F0753CCC117EAB6E00DCB0A1 = F0753CCC117EAB6E00DCB0A1 /* PBXTextBookmark */;
 			F0753CF8117EB39100DCB0A1 = F0753CF8117EB39100DCB0A1 /* PBXTextBookmark */;
@@ -243,8 +247,8 @@
 	08FB7796FE84155DC02AAC07 /* Switchboard.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {905, 6062}}";
-			sepNavSelRange = "{3089, 0}";
-			sepNavVisRange = "{2177, 1298}";
+			sepNavSelRange = "{3052, 0}";
+			sepNavVisRange = "{2177, 1297}";
 			sepNavWindowFrame = "{{564, -38}, {807, 648}}";
 		};
 	};
@@ -780,9 +784,9 @@
 	};
 	F038BBA0116DE7D3008F3116 /* Switchboard.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {905, 896}}";
-			sepNavSelRange = "{1447, 0}";
-			sepNavVisRange = "{252, 1214}";
+			sepNavIntBoundsRect = "{{0, 0}, {905, 882}}";
+			sepNavSelRange = "{740, 0}";
+			sepNavVisRange = "{253, 1219}";
 			sepNavWindowFrame = "{{15, 4}, {968, 774}}";
 		};
 	};
@@ -950,7 +954,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		fallbackIsa = XCBuildMessageTextBookmark;
 		rLen = 1;
-		rLoc = 279;
+		rLoc = 278;
 		rType = 1;
 	};
 	F066D17212E790DE00338418 /* PBXTextBookmark */ = {
@@ -958,7 +962,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 280";
 		rLen = 0;
-		rLoc = 7655;
+		rLoc = 7652;
 		rType = 0;
 		vrLen = 1139;
 		vrLoc = 7030;
@@ -978,7 +982,7 @@
 		fRef = F038BBA0116DE7D3008F3116 /* Switchboard.h */;
 		name = "Switchboard.h: 61";
 		rLen = 0;
-		rLoc = 1447;
+		rLoc = 1446;
 		rType = 0;
 		vrLen = 1214;
 		vrLoc = 252;
@@ -997,9 +1001,49 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 110";
 		rLen = 0;
-		rLoc = 3089;
+		rLoc = 3086;
 		rType = 0;
 		vrLen = 1298;
+		vrLoc = 2177;
+	};
+	F066D17A12E7ED3200338418 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 110";
+		rLen = 0;
+		rLoc = 3086;
+		rType = 0;
+		vrLen = 1298;
+		vrLoc = 2177;
+	};
+	F066D17B12E7EE1700338418 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F038BBA0116DE7D3008F3116 /* Switchboard.h */;
+		name = "Switchboard.h: 37";
+		rLen = 0;
+		rLoc = 740;
+		rType = 0;
+		vrLen = 1219;
+		vrLoc = 253;
+	};
+	F066D17C12E7EE1700338418 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 110";
+		rLen = 0;
+		rLoc = 3086;
+		rType = 0;
+		vrLen = 1298;
+		vrLoc = 2177;
+	};
+	F066D17D12E7EE1700338418 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 105";
+		rLen = 0;
+		rLoc = 3052;
+		rType = 0;
+		vrLen = 1297;
 		vrLoc = 2177;
 	};
 	F06F885912D578D400F2A7E5 /* PBXTextBookmark */ = {
@@ -1510,7 +1554,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 438";
 		rLen = 0;
-		rLoc = 11129;
+		rLoc = 11126;
 		rType = 0;
 		vrLen = 486;
 		vrLoc = 10937;
