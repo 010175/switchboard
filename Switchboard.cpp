@@ -253,10 +253,18 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			try{
 				sender.sendMessage(sm);
 			}
-			catch(std::exception const& e)
-			{
-				std::cout << "Exception: " << e.what() << "\n";
+			catch (std::runtime_error &e) {
+				std::cout << "Caught a runtime_error exception: "
+				<< e.what () << '\n';
 			}
+			catch (std::exception &e) {
+				std::cout << "Caught an exception of an unexpected type: "
+				<< e.what () << '\n';
+			} 
+			catch (...) {
+				std::cout << "Caught an unknown exception\n";
+			}
+			
 			break;
 		}
 		
@@ -297,7 +305,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			myLaunchd_wrapper.submitProcess(PROCESS_LABEL, buffer);
 			activeProcessIndex = appIndex;
 			
-			usleep(1000000); // give some break
+			usleep(2000000); // give some break
 			
 			doFadeOperation(CleanScreen, 2.0f, true); // fade out
 			
@@ -360,9 +368,16 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			try{
 				sender.sendMessage(sm);
 			}
-			catch(std::exception const& e)
-			{
-				std::cout << "Exception: " << e.what() << "\n";
+			catch (std::runtime_error &e) {
+				std::cout << "Caught a runtime_error exception: "
+				<< e.what () << '\n';
+			}
+			catch (std::exception &e) {
+				std::cout << "Caught an exception of an unexpected type: "
+				<< e.what () << '\n';
+			} 
+			catch (...) {
+				std::cout << "Caught an unknown exception\n";
 			}
 			
 			
@@ -382,9 +397,16 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			try{
 				sender.sendMessage(sm);
 			}
-			catch(std::exception const& e)
-			{
-				std::cout << "Exception: " << e.what() << "\n";
+			catch (std::runtime_error &e) {
+				std::cout << "Caught a runtime_error exception: "
+				<< e.what () << '\n';
+			}
+			catch (std::exception &e) {
+				std::cout << "Caught an exception of an unexpected type: "
+				<< e.what () << '\n';
+			} 
+			catch (...) {
+				std::cout << "Caught an unknown exception\n";
 			}
 			
 			break;

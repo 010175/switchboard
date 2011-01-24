@@ -280,7 +280,7 @@
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {243, 650}}</string>
+							<string>{{0, 0}, {243, 661}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -292,14 +292,14 @@
 					<key>GeometryConfiguration</key>
 					<dict>
 						<key>Frame</key>
-						<string>{{0, 0}, {260, 668}}</string>
+						<string>{{0, 0}, {260, 679}}</string>
 						<key>GroupTreeTableConfiguration</key>
 						<array>
 							<string>MainColumn</string>
 							<real>243</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>-25 69 1231 709 0 0 1280 778 </string>
+						<string>-25 58 1305 720 0 0 1280 778 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -329,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>F0FBD70112EDD00100C249AA</string>
+										<string>F0FBD71E12EDFF1A00C249AA</string>
 										<key>history</key>
 										<array>
 											<string>F024F79410E81A3F00828192</string>
@@ -426,11 +426,11 @@
 											<string>F0FBD04012EB22ED00C249AA</string>
 											<string>F0FBD04112EB22ED00C249AA</string>
 											<string>F0FBD6EE12EDCCBD00C249AA</string>
-											<string>F0FBD6EF12EDCCBD00C249AA</string>
 											<string>F0FBD6F012EDCCBD00C249AA</string>
 											<string>F0FBD6F112EDCCBD00C249AA</string>
 											<string>F0FBD6F212EDCCBD00C249AA</string>
-											<string>F0FBD6F412EDCCBD00C249AA</string>
+											<string>F0FBD71C12EDFF1A00C249AA</string>
+											<string>F0FBD71D12EDFF1A00C249AA</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -442,14 +442,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {966, 663}}</string>
+								<string>{{0, 0}, {1040, 674}}</string>
 								<key>RubberWindowFrame</key>
-								<string>-25 69 1231 709 0 0 1280 778 </string>
+								<string>-25 58 1305 720 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>663pt</string>
+							<string>674pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -462,9 +462,9 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 668}, {966, 0}}</string>
+								<string>{{0, 679}, {1040, 0}}</string>
 								<key>RubberWindowFrame</key>
-								<string>-25 69 1231 709 0 0 1280 778 </string>
+								<string>-25 58 1305 720 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
@@ -473,7 +473,7 @@
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>966pt</string>
+					<string>1040pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
@@ -633,7 +633,7 @@
 		<string>/Users/guillaume/Usine/monolithe/switchboard/Switchboard/Switchboard.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>-25 69 1231 709 0 0 1280 778 </string>
+	<string>-25 58 1305 720 0 0 1280 778 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>

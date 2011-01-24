@@ -37,6 +37,8 @@
 #include "curl/curl.h"
 #include "tinyxml/tinyxml.h"
 
+#include <stdexcept> 
+
 double getSystemTime();
 
 // curl callbacks
