@@ -61,4 +61,8 @@ curlSendProcessListThreadedObject sendProcessListToWebConsoleThread;
 // osc
 OscSender sender;
 
+// client ip array
+CFMutableDictionaryRef clientListDictionnary;
+
+
 #endif

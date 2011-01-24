@@ -17,6 +17,9 @@
 
 #define LOCATION "monolithe"
 
+#define kIPKeyCFStringRef CFSTR("IP")        // dictionary key
+#define kTimeKeyCFStringRef CFSTR("Time")    // dictionary key
+
 int activeProcessIndex = -1;
 int selectedProcessIndex = -1;
 double lastLaunchProcessTime = 0;
@@ -228,6 +231,14 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		
 		printf("%.2i:%.2i:%.2i @%s : %s\n", timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec,rm.getRemoteIp().c_str(), rm.getAddress().c_str());
 		
+		//CFStringRef remoteIP = CFStringCreateWithCString(kCFAllocatorDefault,rm.getRemoteIp().c_str(),kCFStringEncodingASCII);
+		//CFNumberRef timecf = CFNumberCreate(kCFAllocatorDefault, kCFNumberNSIntegerType, &rawtime);
+		//CFDictionaryAddValue(clientListDictionnary, remoteIP, timecf);
+		
+		//CFShow(timecf);
+		//CFShow(remoteIP);
+		
+		//CFShow(clientListDictionnary);
 		
 		// ping
 		if ( rm.getAddress() == "/monolithe/ping" )
@@ -239,7 +250,13 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			sm.setAddress("/monolithe/pong"); // pong back to remote
 			sm.addStringArg(networkUtils.getInterfaceAddress(0));
 			
-			sender.sendMessage(sm);
+			try{
+				sender.sendMessage(sm);
+			}
+			catch(std::exception const& e)
+			{
+				std::cout << "Exception: " << e.what() << "\n";
+			}
 			break;
 		}
 		
@@ -255,9 +272,9 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				break;
 			}
 			lastLaunchProcessTime = now;
-	
+			
 			int appIndex = rm.getArgAsInt32( 0 );
-	
+			
 			if (appIndex == activeProcessIndex) break; // don't relaunch current app
 			
 			//CFStringRef tmpPathCFString = myApplicationlister.getApplicationPath(appIndex);
@@ -266,7 +283,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 			//remove current process
 			myLaunchd_wrapper.removeProcess(PROCESS_LABEL);
-		
+			
 			CFStringRef appPath = myApplicationlister.getApplicationPath(appIndex);
 			
 			if (appPath == NULL) // double check if app name is not null.
@@ -281,7 +298,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			activeProcessIndex = appIndex;
 			
 			usleep(1000000); // give some break
-				
+			
 			doFadeOperation(CleanScreen, 2.0f, true); // fade out
 			
 			// set process to front
@@ -296,7 +313,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 			OSErr er = SetFrontProcess(&psn);
 			printf("error ? %i\r", er);
-		
+			
 			
 			sendProcessListToWebConsoleThread.start();
 			
@@ -340,7 +357,14 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				}					
 			}
 			
-			sender.sendMessage(sm);
+			try{
+				sender.sendMessage(sm);
+			}
+			catch(std::exception const& e)
+			{
+				std::cout << "Exception: " << e.what() << "\n";
+			}
+			
 			
 			break;
 		}
@@ -348,13 +372,20 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		// send current process index
 		if ( rm.getAddress() == "/monolithe/getprocessindex" ) 
 		{
-		
+			
 			sender.setup(rm.getRemoteIp(), _SENDER_PORT);// reset sender remote ip
 			
 			OscMessage sm;
 			sm.setAddress("/monolithe/setprocessindex");
-			sm.addIntArg(activeProcessIndex);				
-			sender.sendMessage(sm);
+			sm.addIntArg(activeProcessIndex);	
+			
+			try{
+				sender.sendMessage(sm);
+			}
+			catch(std::exception const& e)
+			{
+				std::cout << "Exception: " << e.what() << "\n";
+			}
 			
 			break;
 			
@@ -398,6 +429,13 @@ void webConsoleTimerFunction(CFRunLoopTimerRef timer, void *info)
 #pragma mark main
 int main (int argc, const char * argv[]) {
 	printf("%s", argv[0]);
+	
+	// init array
+	clientListDictionnary =CFDictionaryCreateMutable (kCFAllocatorDefault,
+													  0,
+													  NULL,
+													  NULL
+													  );
 	
 	// setup runLoops
 	CFRunLoopRef		mRunLoopRef;
