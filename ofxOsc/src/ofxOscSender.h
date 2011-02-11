@@ -3,31 +3,31 @@
  Copyright 2007, 2008 Damian Stewart damian@frey.co.nz
  Distributed under the terms of the GNU Lesser General Public License v3
  
- This file is part of the Osc openFrameworks OSC addon.
+ This file is part of the ofxOsc openFrameworks OSC addon.
  
- Osc is free software: you can redistribute it and/or modify
+ ofxOsc is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
  
- Osc is distributed in the hope that it will be useful,
+ ofxOsc is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
  
  You should have received a copy of the GNU Lesser General Public License
- along with Osc.  If not, see <http://www.gnu.org/licenses/>.
+ along with ofxOsc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
-#ifndef OscSENDER_H
-#define OscSENDER_H
+#ifndef _ofxOscSENDER_H
+#define _ofxOscSENDER_H
 
 /**
 
-OscSender
+ofxOscSender
 
-an OscSender sends messages to a single host/port
+an ofxOscSender sends messages to a single host/port
 
 */
 
@@ -36,29 +36,29 @@ class UdpTransmitSocket;
 #include "OscTypes.h"
 #include "OscOutboundPacketStream.h"
 
-#include "OscBundle.h"
-#include "OscMessage.h"
+#include "ofxOscBundle.h"
+#include "ofxOscMessage.h"
 
 
-class OscSender
+class ofxOscSender
 {
 public:
-	OscSender();
-	~OscSender();
+	ofxOscSender();
+	~ofxOscSender();
 
 	/// send messages to hostname and port
 	void setup( std::string hostname, int port );
 
 	/// send the given message
-	void sendMessage( OscMessage& message );
+	void sendMessage( ofxOscMessage& message );
 	/// send the given bundle
-	void sendBundle( OscBundle& bundle );
+	void sendBundle( ofxOscBundle& bundle );
 
 private:
 		
 	// helper methods for constructing messages
-	void appendBundle( OscBundle& bundle, osc::OutboundPacketStream& p );
-	void appendMessage( OscMessage& message, osc::OutboundPacketStream& p );
+	void appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream& p );
+	void appendMessage( ofxOscMessage& message, osc::OutboundPacketStream& p );
 
 	UdpTransmitSocket* socket;
 };

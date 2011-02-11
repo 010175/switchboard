@@ -53,11 +53,31 @@ CFStringRef applicationLister::getApplicationPath(int _index){
 	CFStringRef bundleExecutablePathCFString = CFURLCopyFileSystemPath(CFURLCopyAbsoluteURL(bundleExecutableUrl),kCFURLPOSIXPathStyle); // copy CFURL to CFString
 	
 	CFRelease(bundleExecutableUrl);
-	//CFRelease(aBundle); don't release bundle it's inside the array
 	
 	return bundleExecutablePathCFString;
 	
 }
+
+//----------------------------------------------------------
+CFStringRef applicationLister::getApplicationEnclosingDirectoryPath(int _index){
+	
+	CFBundleRef aBundle = (CFBundleRef) CFArrayGetValueAtIndex(applicationBundleArray, _index);
+	
+	CFURLRef bundleUrl = CFBundleCopyBundleURL(aBundle); // get bundle url
+	
+	//CFURLRef bundleExecutableUrl = CFBundleCopyExecutableURL(aBundle); //get the bundle executable url (executable name)
+	CFURLRef directoryUrl = CFURLCreateCopyDeletingLastPathComponent(kCFAllocatorDefault,bundleUrl);
+	CFStringRef bundleExecutablePathCFString = CFURLCopyFileSystemPath(CFURLCopyAbsoluteURL(directoryUrl),kCFURLPOSIXPathStyle); // copy CFURL to CFString
+	
+	CFShow(bundleExecutablePathCFString);
+	
+	CFRelease(bundleUrl);
+	CFRelease(directoryUrl);
+	
+	return bundleExecutablePathCFString;
+	
+}
+
 
 
 //----------------------------------------------------------
@@ -71,18 +91,6 @@ int applicationLister::getApplicationCount(){
 //----------------------------------------------------------
 void applicationLister::findExecutable(string path){
 	
-	/*
-	 // get the path of our applications directory
-	 applicationsDirectoryPath = getExecutablePath();
-	 
-	 size_t found;
-	 found=applicationsDirectoryPath.find_last_of("/");
-	 applicationsDirectoryPath = applicationsDirectoryPath.substr(0,found); // path to my folder
-	 
-	 applicationsDirectoryPath+="/Applications/"; // path to the Applications directory
-	 
-	 //cout << "Applications directory path is : " << applicationsDirectoryPath << endl;
-	 */
 	CFStringRef applicationsDirectoryPathCFString;
 	applicationsDirectoryPathCFString = CFStringCreateWithCString(kCFAllocatorDefault,path.c_str(),kCFStringEncodingMacRoman);
 	
@@ -140,8 +148,11 @@ void applicationLister::updateApplicationsList(){
 	
 	applicationsDirectoryPath+="/Applications/"; // path to the Applications directory
 	
+	// find first level applications
 	findExecutable(applicationsDirectoryPath);
 	
+	
+	// find applications in sub directory
 	dir = opendir(applicationsDirectoryPath.c_str());
 	
 	string entry_name = "";

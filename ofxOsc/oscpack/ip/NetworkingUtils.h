@@ -27,23 +27,23 @@
 	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef INCLUDED_OSCPRINTRECEIVEDELEMENTS_H
-#define INCLUDED_OSCPRINTRECEIVEDELEMENTS_H
-
-#include <iosfwd>
-
-#ifndef INCLUDED_OSCRECEIVEDELEMENTS_H
-#include "OscReceivedElements.h"
-#endif /* INCLUDED_OSCRECEIVEDELEMENTS_H */
+#ifndef INCLUDED_NETWORKINGUTILS_H
+#define INCLUDED_NETWORKINGUTILS_H
 
 
-namespace osc{
+// in general NetworkInitializer is only used internally, but if you're 
+// application creates multiple sockets from different threads at runtime you
+// should instantiate one of these in main just to make sure the networking
+// layer is initialized.
+class NetworkInitializer{
+public:
+    NetworkInitializer();
+    ~NetworkInitializer();
+};
 
-std::ostream& operator<<( std::ostream & os, const ReceivedPacket& p );
-std::ostream& operator<<( std::ostream & os, const ReceivedMessageArgument& arg );
-std::ostream& operator<<( std::ostream & os, const ReceivedMessage& m );
-std::ostream& operator<<( std::ostream & os, const ReceivedBundle& b );
 
-} // namespace osc
+// return ip address of host name in host byte order
+unsigned long GetHostByName( const char *name );
 
-#endif /* INCLUDED_OSCPRINTRECEIVEDELEMENTS_H */
+
+#endif /* INCLUDED_NETWORKINGUTILS_H */

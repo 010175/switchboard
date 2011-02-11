@@ -27,7 +27,7 @@
 	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#include "UdpSocket.h"
+#include "../UdpSocket.h"
 
 #include <vector>
 #include <algorithm>
@@ -48,8 +48,8 @@
 #include <sys/time.h>
 #include <netinet/in.h> // for sockaddr_in
 
-#include "PacketListener.h"
-#include "TimerListener.h"
+#include "../PacketListener.h"
+#include "../TimerListener.h"
 
 
 #if defined(__APPLE__) && !defined(_SOCKLEN_T)
@@ -107,6 +107,8 @@ public:
             throw std::runtime_error("unable to create udp socket\n");
         }
 
+		int on=1;
+		setsockopt(socket_, SOL_SOCKET, SO_BROADCAST, (char*)&on, sizeof(on));
 		memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
         sendToAddr_.sin_family = AF_INET;
 	}
@@ -189,7 +191,6 @@ public:
 
 	void Bind( const IpEndpointName& localEndpoint )
 	{
-		printf("bind\rs");
 		struct sockaddr_in bindSockAddr;
 		SockaddrFromIpEndpointName( bindSockAddr, localEndpoint );
 
@@ -423,13 +424,15 @@ public:
 			}
 
 			if( select( fdmax + 1, &tempfds, 0, 0, timeoutPtr ) < 0 && errno != EINTR ){
-   				throw std::runtime_error("select failed\n");
+   				if (!break_) throw std::runtime_error("select failed\n");
+				else break;
 			}
 
 			if ( FD_ISSET( breakPipe_[0], &tempfds ) ){
 				// clear pending data from the asynchronous break pipe
 				char c;
-				read( breakPipe_[0], &c, 1 );
+				ssize_t ret; 
+				ret = read( breakPipe_[0], &c, 1 );
 			}
 			
 			if( break_ )
@@ -479,7 +482,8 @@ public:
 		break_ = true;
 
 		// Send a termination message to the asynchronous break pipe, so select() will return
-		write( breakPipe_[1], "!", 1 );
+		ssize_t ret;
+		ret = write( breakPipe_[1], "!", 1 );
 	}
 };
 

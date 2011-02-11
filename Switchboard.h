@@ -6,7 +6,6 @@
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  */
 
-
 #ifndef SWITCHBOARD
 #define SWITCHBOARD
 
@@ -24,22 +23,40 @@
 #endif
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <signal.h>
+
 #include <time.h>
 #include "sys/time.h"
+
 #include "application_lister.h"
+
 #include "launchd_wrapper.h"
+
 #include "ip/UdpSocket.h"
 #include "ip/PacketListener.h"
+
 #include "thread/thread_runner.h"
-#include "osc_wrapper/Osc.h"
+
+#include "ofxOsc.h"
+
 #include "ofxNetworkUtils.h"
+
 #include "screen_fader.h"
+
 #include "curl/curl.h"
+
 #include "tinyxml/tinyxml.h"
 
 #include <stdexcept> 
 
 double getSystemTime();
+
+// signal handler
+void SignalHandler(int signal);
+void InstallExceptionHandler();
+
+// notification callback
+static void myNotificationCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo);
 
 // curl callbacks
 size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t nmemb, void *stream);
@@ -61,7 +78,7 @@ int main (int argc, const char * argv[]);
 curlSendProcessListThreadedObject sendProcessListToWebConsoleThread;
 
 // osc
-OscSender sender;
+ofxOscSender sender;
 
 // client ip array
 CFMutableDictionaryRef clientListDictionnary;

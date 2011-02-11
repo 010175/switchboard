@@ -3,56 +3,56 @@
  Copyright 2007, 2008 Damian Stewart damian@frey.co.nz
  Distributed under the terms of the GNU Lesser General Public License v3
  
- This file is part of the Osc openFrameworks OSC addon.
+ This file is part of the ofxOsc openFrameworks OSC addon.
  
- Osc is free software: you can redistribute it and/or modify
+ ofxOsc is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
  
- Osc is distributed in the hope that it will be useful,
+ ofxOsc is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
  
  You should have received a copy of the GNU Lesser General Public License
- along with Osc.  If not, see <http://www.gnu.org/licenses/>.
+ along with ofxOsc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _OscBUNDLE_H
-#define _OscBUNDLE_H
+#ifndef _OFXOSCBUNDLE_H
+#define _OFXOSCBUNDLE_H
 
 #include <vector>
-#include "OscMessage.h"
+#include "ofxOscMessage.h"
 
-class OscBundle
+class ofxOscBundle
 {
 public:	
-	OscBundle();
-	~OscBundle();
-	OscBundle( const OscBundle& other ) { copy ( other ); }
-	OscBundle& operator= ( const OscBundle& other ) { return copy( other ); }
+	ofxOscBundle();
+	~ofxOscBundle();
+	ofxOscBundle( const ofxOscBundle& other ) { copy ( other ); }
+	ofxOscBundle& operator= ( const ofxOscBundle& other ) { return copy( other ); }
 	/// for operator= and copy constructor
-	OscBundle& copy( const OscBundle& other );
+	ofxOscBundle& copy( const ofxOscBundle& other );
 	
 	/// erase contents
 	void clear() { messages.clear(); bundles.clear(); }
 
 	/// add bundle elements
-	void addBundle( const OscBundle& element );
-	void addMessage( const OscMessage& message );
+	void addBundle( const ofxOscBundle& element );
+	void addMessage( const ofxOscMessage& message );
 	
 	/// get bundle elements
 	int getBundleCount() const { return bundles.size(); }
 	int getMessageCount() const { return messages.size(); }
 	/// return the bundle or message at the given index
-	OscBundle& getBundleAt( int i ) { return bundles[i]; }
-	OscMessage& getMessageAt( int i ) { return messages[i]; }
+	ofxOscBundle& getBundleAt( int i ) { return bundles[i]; }
+	ofxOscMessage& getMessageAt( int i ) { return messages[i]; }
 	
 private:
 		
-	std::vector< OscMessage > messages;
-	std::vector< OscBundle > bundles;
+	std::vector< ofxOscMessage > messages;
+	std::vector< ofxOscBundle > bundles;
 };
 
 

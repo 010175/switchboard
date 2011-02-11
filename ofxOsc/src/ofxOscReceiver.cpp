@@ -3,23 +3,23 @@
  Copyright 2007, 2008 Damian Stewart damian@frey.co.nz
  Distributed under the terms of the GNU Lesser General Public License v3
 
- This file is part of the Osc openFrameworks OSC addon.
+ This file is part of the ofxOsc openFrameworks OSC addon.
 
- Osc is free software: you can redistribute it and/or modify
+ ofxOsc is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
- Osc is distributed in the hope that it will be useful,
+ ofxOsc is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU Lesser General Public License
- along with Osc.  If not, see <http://www.gnu.org/licenses/>.
+ along with ofxOsc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "OscReceiver.h"
+#include "ofxOscReceiver.h"
 
 #ifndef TARGET_WIN32
         #include <pthread.h>
@@ -27,7 +27,7 @@
 #include <iostream>
 #include <assert.h>
 
-OscReceiver::OscReceiver()
+ofxOscReceiver::ofxOscReceiver()
 {
 #ifdef TARGET_WIN32
 	mutex = CreateMutexA( NULL, FALSE, NULL );
@@ -36,26 +36,26 @@ OscReceiver::OscReceiver()
 #endif
 }
 
-void OscReceiver::setup( int listen_port )
+void ofxOscReceiver::setup( int listen_port )
 {
 	listen_socket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ), this );
 #ifdef TARGET_WIN32
 	thread	= CreateThread(
 							   NULL,              // default security attributes
 							   0,                 // use default stack size
-							&OscReceiver::startThread,        // thread function
+							&ofxOscReceiver::startThread,        // thread function
 							   (void*)(listen_socket),             // argument to thread function
 							   0,                 // use default creation flags
 							   NULL);             // we don't the the thread id
 
 #else
-	pthread_create( &thread, NULL, &OscReceiver::startThread, (void*)(listen_socket) );
+	pthread_create( &thread, NULL, &ofxOscReceiver::startThread, (void*)(listen_socket) );
 
 
 #endif
 }
 
-OscReceiver::~OscReceiver()
+ofxOscReceiver::~ofxOscReceiver()
 {
 //	delete listen_socket;
 }
@@ -77,7 +77,7 @@ DWORD WINAPI
 void*
 #endif
 
-		OscReceiver::startThread( void* _socket )
+		ofxOscReceiver::startThread( void* _socket )
 {
 	UdpListeningReceiveSocket* socket = (UdpListeningReceiveSocket*)_socket;
 	socket->Run();
@@ -88,10 +88,10 @@ void*
     #endif
 }
 
-void OscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint )
+void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint )
 {
-	// convert the message to an OscMessage
-	OscMessage* ofMessage = new OscMessage();
+	// convert the message to an ofxOscMessage
+	ofxOscMessage* ofMessage = new ofxOscMessage();
 
 	// set the address
 	ofMessage->setAddress( m.AddressPattern() );
@@ -112,9 +112,15 @@ void OscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndpoin
 			ofMessage->addFloatArg( arg->AsFloatUnchecked() );
 		else if ( arg->IsString() )
 			ofMessage->addStringArg( arg->AsStringUnchecked() );
+		else if ( arg->IsBlob() )
+		{
+			osc::Blob blob;
+			arg->AsBlobUnchecked( blob.data, blob.size );
+			ofMessage->addBlobArg( blob );
+		}
 		else
 		{
-			assert( false && "message argument is not int, float, or string" );
+			assert( false && "message argument is not int, float, string, or blob" );
 		}
 	}
 
@@ -136,7 +142,7 @@ void OscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndpoin
 	releaseMutex();
 }
 
-bool OscReceiver::hasWaitingMessages()
+bool ofxOscReceiver::hasWaitingMessages()
 {
 	// grab a lock on the queue
 	grabMutex();
@@ -151,7 +157,7 @@ bool OscReceiver::hasWaitingMessages()
 	return queue_length > 0;
 }
 
-bool OscReceiver::getNextMessage( OscMessage* message )
+bool ofxOscReceiver::getNextMessage( ofxOscMessage* message )
 {
 	// grab a lock on the queue
 	grabMutex();
@@ -165,7 +171,7 @@ bool OscReceiver::getNextMessage( OscMessage* message )
 	}
 
 	// copy the message from the queue to message
-	OscMessage* src_message = messages.front();
+	ofxOscMessage* src_message = messages.front();
 	message->copy( *src_message );
 
 	// now delete the src message
@@ -180,7 +186,7 @@ bool OscReceiver::getNextMessage( OscMessage* message )
 	return true;
 }
 
-void OscReceiver::grabMutex()
+void ofxOscReceiver::grabMutex()
 {
 #ifdef TARGET_WIN32
 	WaitForSingleObject( mutex, INFINITE );
@@ -189,7 +195,7 @@ void OscReceiver::grabMutex()
 #endif
 }
 
-void OscReceiver::releaseMutex()
+void ofxOscReceiver::releaseMutex()
 {
 #ifdef TARGET_WIN32
 	ReleaseMutex( mutex );

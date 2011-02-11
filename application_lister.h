@@ -48,6 +48,10 @@ public:
 	
 	CFStringRef getApplicationPath(int _index);
 	
+	CFStringRef getApplicationEnclosingDirectoryPath(int _index);
+	
+	CFStringRef getApplicationDescription(int _index);
+	
 	int getApplicationCount();
 	
 	void dumpApplicationList();

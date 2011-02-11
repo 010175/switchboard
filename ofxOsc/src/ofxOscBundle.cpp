@@ -19,13 +19,39 @@
  along with ofxOsc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OSC_H
-#define OSC_H
+#include "ofxOscBundle.h"
 
-#define OSC_HOST_LITTLE_ENDIAN
-#include "OscArg.h"
-#include "OscMessage.h"
-#include "OscSender.h"
-#include "OscReceiver.h"
 
-#endif
+ofxOscBundle::ofxOscBundle()
+{
+}
+
+ofxOscBundle::~ofxOscBundle()
+{
+}
+
+ofxOscBundle& ofxOscBundle::copy( const ofxOscBundle& other )
+{
+	for ( int i=0; i<other.bundles.size(); i++ )
+	{
+		bundles.push_back( other.bundles[i] );
+	}
+	for ( int i=0; i<other.messages.size(); i++ )
+	{
+		messages.push_back( other.messages[i] );
+	}
+	return *this;
+}
+
+
+
+void ofxOscBundle::addBundle( const ofxOscBundle& bundle )
+{
+	bundles.push_back( bundle );
+}
+
+void ofxOscBundle::addMessage( const ofxOscMessage& message )
+{
+	messages.push_back( message );
+}
+

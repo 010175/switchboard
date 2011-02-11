@@ -3,40 +3,41 @@
  Copyright 2007, 2008 Damian Stewart damian@frey.co.nz
  Distributed under the terms of the GNU Lesser General Public License v3
 
- This file is part of the Osc openFrameworks OSC addon.
+ This file is part of the ofxOsc openFrameworks OSC addon.
 
- Osc is free software: you can redistribute it and/or modify
+ ofxOsc is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
 
- Osc is distributed in the hope that it will be useful,
+ ofxOsc is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU Lesser General Public License
- along with Osc.  If not, see <http://www.gnu.org/licenses/>.
+ along with ofxOsc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _OscMESSAGE_H
-#define _OscMESSAGE_H
+#ifndef _ofxOscMESSAGE_H
+#define _ofxOscMESSAGE_H
 
-#include "OscArg.h"
+#include "ofxOscArg.h"
 #include <vector>
 #include <string>
+#include "OscReceivedElements.h"
 
 using namespace std;
 
-class OscMessage
+class ofxOscMessage
 {
 public:
-	OscMessage();
-	~OscMessage();
-	OscMessage( const OscMessage& other ){ copy ( other ); }
-	OscMessage& operator= ( const OscMessage& other ) { return copy( other ); }
+	ofxOscMessage();
+	~ofxOscMessage();
+	ofxOscMessage( const ofxOscMessage& other ){ copy ( other ); }
+	ofxOscMessage& operator= ( const ofxOscMessage& other ) { return copy( other ); }
 	/// for operator= and copy constructor
-	OscMessage& copy( const OscMessage& other );
+	ofxOscMessage& copy( const ofxOscMessage& other );
 
 	/// clear this message, erase all contents
 	void clear();
@@ -52,7 +53,7 @@ public:
 	/// return number of argumentsļ
 	int getNumArgs() const;
 	/// return argument type code for argument # index
-	OscArgType getArgType( int index ) const;
+	ofxOscArgType getArgType( int index ) const;
 	/// return argument type name as string
 	/// - either "int", "float", or "string"
 	string getArgTypeName( int index ) const;
@@ -64,6 +65,7 @@ public:
 	int32_t getArgAsInt32( int index ) const;
 	float getArgAsFloat( int index ) const;
 	string getArgAsString( int index ) const;
+	osc::Blob getArgAsBlob( int index ) const;
 
 	/// message construction
 	void setAddress( string _address ) { address = _address; };
@@ -72,12 +74,12 @@ public:
 	void addIntArg( int32_t argument );
 	void addFloatArg( float argument );
 	void addStringArg( string argument );
-
+	void addBlobArg( osc::Blob argument );
 
 private:
 
 	string address;
-	vector<OscArg*> args;
+	vector<ofxOscArg*> args;
 
 	string remote_host;
 	int remote_port;

@@ -3,27 +3,28 @@
  Copyright 2007, 2008 Damian Stewart damian@frey.co.nz
  Distributed under the terms of the GNU Lesser General Public License v3
  
- This file is part of the Osc openFrameworks OSC addon.
+ This file is part of the ofxOsc openFrameworks OSC addon.
  
- Osc is free software: you can redistribute it and/or modify
+ ofxOsc is free software: you can redistribute it and/or modify
  it under the terms of the GNU Lesser General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
  
- Osc is distributed in the hope that it will be useful,
+ ofxOsc is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
  
  You should have received a copy of the GNU Lesser General Public License
- along with Osc.  If not, see <http://www.gnu.org/licenses/>.
+ along with ofxOsc.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
-#ifndef OscRECEIVER_H
-#define OscRECEIVER_H
+#ifndef _ofxOscRECEIVER_H
+#define _ofxOscRECEIVER_H
 
 #include <deque>
+//#include "ofMain.h"
 
 #ifdef TARGET_WIN32
 // threads
@@ -38,14 +39,14 @@
 #include "OscPacketListener.h"
 #include "UdpSocket.h"
 
-// Osc
-#include "OscMessage.h"
+// ofxOsc
+#include "ofxOscMessage.h"
 
-class OscReceiver : public osc::OscPacketListener
+class ofxOscReceiver : public osc::OscPacketListener
 {
 public:
-	OscReceiver();
-	~OscReceiver();
+	ofxOscReceiver();
+	~ofxOscReceiver();
 
 	/// listen_port is the port to listen for messages on
 	void setup( int listen_port );
@@ -55,7 +56,7 @@ public:
 	/// take the next message on the queue of received messages, copy its details into message, and
 	/// remove it from the queue. return false if there are no more messages to be got, otherwise
 	/// return true
-	bool getNextMessage( OscMessage* );
+	bool getNextMessage( ofxOscMessage* );
 
 protected:
 	/// process an incoming osc message and add it to the queue
@@ -70,7 +71,7 @@ private:
 	static void* startThread( void* listen_socket );
 #endif
 	// queue of osc messages
-	std::deque< OscMessage* > messages;
+	std::deque< ofxOscMessage* > messages;
 
 	// socket to listen on
 	UdpListeningReceiveSocket* listen_socket;
