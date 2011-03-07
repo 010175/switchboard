@@ -3,13 +3,13 @@
  ** Copyright (c) 2011. All rights reserved.
  **********************************************************************/
 
-#include "launchd_wrapper.h"
+#include "launchdWrapper.h"
 
 /************************************************************
  
  launchd_wrapper class
  
- File: 			launchd_wrapper.cpp
+ File: 			launchdWrapper.cpp
  Description: 	launchd wrapper
  
  
@@ -20,41 +20,41 @@
 
 
 //----------------------------------------------------------
-launchd_wrapper::launchd_wrapper(){
+launchdWrapper::launchdWrapper(){
 	
 }
 
 //----------------------------------------------------------
-launchd_wrapper::~launchd_wrapper(){
+launchdWrapper::~launchdWrapper(){
 	
 }
 
 //----------------------------------------------------------
-void launchd_wrapper::setProcessPath(CFStringRef _processPath){
+void launchdWrapper::setProcessPath(CFStringRef _processPath){
 	//CFShow(_processPath);
 	processPath = _processPath;
 	
 }
 //----------------------------------------------------------
-void launchd_wrapper::setProcessLabel(CFStringRef _processLabel){
+void launchdWrapper::setProcessLabel(CFStringRef _processLabel){
 	//CFShow(_processLabel);
 	processLabel = _processLabel;
 	
 }
 //----------------------------------------------------------
-void launchd_wrapper::setKeepAlive(bool _keepAlive){
+void launchdWrapper::setKeepAlive(bool _keepAlive){
 	//printf("keepAlive is set\n");
 	keepAlive = _keepAlive;
 	
 }
 //----------------------------------------------------------
-void launchd_wrapper::setThrottleInterval(int _throttleInterval){
+void launchdWrapper::setThrottleInterval(int _throttleInterval){
 	//printf("throttleInterval is set\n");
 	throttleInterval = _throttleInterval;
 }
 
 //----------------------------------------------------------
-bool launchd_wrapper::isProcessRunning(const char *_processLabel){
+bool launchdWrapper::isProcessRunning(const char *_processLabel){
 	// Use launch lib to buid a dictionnary of a certain process with process label.
 	// Return dictionnary lookup result.
 	launch_data_t resp, msg =NULL;
@@ -82,7 +82,7 @@ bool launchd_wrapper::isProcessRunning(const char *_processLabel){
 	return	(exist);
 }
 
-int launchd_wrapper::getPIDForProcessLabel(const char *_processLabel){
+int launchdWrapper::getPIDForProcessLabel(const char *_processLabel){
 	
 	launch_data_t resp, msg =NULL;
 	launch_data_t pido;
@@ -113,7 +113,7 @@ int launchd_wrapper::getPIDForProcessLabel(const char *_processLabel){
 
 //----------------------------------------------------------
 
-int launchd_wrapper::submitProcess(const char *_processLabel, const char *_processPath)
+int launchdWrapper::submitProcess(const char *_processLabel, const char *_processPath)
 {
 	launch_data_t msg = launch_data_alloc(LAUNCH_DATA_DICTIONARY);
 	launch_data_t job = launch_data_alloc(LAUNCH_DATA_DICTIONARY);
@@ -156,7 +156,7 @@ int launchd_wrapper::submitProcess(const char *_processLabel, const char *_proce
 }
 //----------------------------------------------------------
 
-int launchd_wrapper::removeProcess(const char *_processLabel)
+int launchdWrapper::removeProcess(const char *_processLabel)
 {
 	
 	launch_data_t resp, msg;
@@ -187,6 +187,6 @@ int launchd_wrapper::removeProcess(const char *_processLabel)
 	
 }
 //----------------------------------------------------------
-string launchd_wrapper::listProcess(){
+string launchdWrapper::listProcess(){
 	return 0;
 }

@@ -150,6 +150,7 @@ osc::Blob ofxOscMessage::getArgAsBlob( int index ) const
 	    if ( getArgType( index ) == OFXOSC_TYPE_STRING )
         {
             fprintf(stderr, "ofxOscMessage:getArgAsBlob: warning: converting string to blob for argument %i\n", index );
+			return osc::Blob( NULL, 0 );
         }
         else
         {

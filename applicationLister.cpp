@@ -4,7 +4,8 @@
  ** Copyright (c) 2009. All rights reserved.
  **********************************************************************/
 
-#include "application_lister.h"
+#include "applicationLister.h"
+#include <dirent.h>
 
 //----------------------------------------------------------
 applicationLister::applicationLister(){
@@ -14,7 +15,7 @@ applicationLister::applicationLister(){
 
 //----------------------------------------------------------
 applicationLister::~applicationLister(){
-
+	
 	CFRelease(applicationBundleArray);
 }
 
@@ -22,7 +23,7 @@ applicationLister::~applicationLister(){
 CFStringRef applicationLister::getApplicationName(int _index){
 	
 	if (_index==LAST_ADDED_APPLICATION){
-	
+		
 		_index = 0;
 	}
 	
@@ -38,7 +39,7 @@ CFStringRef applicationLister::getApplicationName(int _index){
 	
 	//get bundle path
 	CFStringRef bundleNameCFString = (CFStringRef)aBundleName;
-
+	
 	//CFRelease(aBundleName);
 	//CFRelease(aBundle);
 	
@@ -78,133 +79,130 @@ CFStringRef applicationLister::getApplicationEnclosingDirectoryPath(int _index){
 	
 }
 
-
-
 //----------------------------------------------------------
 int applicationLister::getApplicationCount(){
 	
 	size_t applicationBundleArraySize = CFArrayGetCount(applicationBundleArray);
-
 	return applicationBundleArraySize;
 }
 
 //----------------------------------------------------------
-void applicationLister::findExecutable(string path){
+OSStatus applicationLister::findExecutable(CFURLRef enclosingDirectoryURL){
 	
-	CFStringRef applicationsDirectoryPathCFString;
-	applicationsDirectoryPathCFString = CFStringCreateWithCString(kCFAllocatorDefault,path.c_str(),kCFStringEncodingMacRoman);
-	
-	// Create a URL of applications directory.
-	CFURLRef applicationsDirectoryUrl = CFURLCreateWithFileSystemPath(
-																	  kCFAllocatorDefault,
-																	  applicationsDirectoryPathCFString,		// file path name
-																	  kCFURLPOSIXPathStyle,					// interpret as POSIX path
-																	  true );   
-	
-	CFRelease(applicationsDirectoryPathCFString); // release CFStringRef
-	
-	if (!applicationsDirectoryUrl)
-	{
-		//CFShow(CFSTR("error creating applications directory url.\n"));
-		return;
-	}
-	
-	//
-	
-	//CFArrayRef applicationBundleArray; // array of applications bundle in the Applications directory
-	
+	OSStatus err = noErr;
 	CFArrayRef tmpApplicationBundleArray;
 	
-	tmpApplicationBundleArray = CFBundleCreateBundlesFromDirectory(kCFAllocatorDefault,applicationsDirectoryUrl, CFSTR("app"));
+	// Create URL of applications directory.
+	/*CFURLRef applicationsDirectoryUrl = CFURLCreateWithFileSystemPath(
+	 kCFAllocatorDefault,
+	 path,						// file path name
+	 kCFURLPOSIXPathStyle,		// interpret as POSIX path
+	 true );
+	 */
+	printf("find app\n");
 	
-	if (tmpApplicationBundleArray){
-		//CFShow(tmpApplicationBundleArray);
+	if (enclosingDirectoryURL == NULL) { err = true; }
+	
+	if (err==noErr){
+		tmpApplicationBundleArray = CFBundleCreateBundlesFromDirectory(kCFAllocatorDefault,enclosingDirectoryURL, CFSTR("app"));
+		if (tmpApplicationBundleArray==NULL){ err = true; }
+	}
+	
+	if (err==noErr){
 		CFArrayAppendArray(applicationBundleArray,tmpApplicationBundleArray, CFRangeMake(0, CFArrayGetCount(tmpApplicationBundleArray)));
 	}
 	
-	CFRelease(applicationsDirectoryUrl); // release CFURLRef
-	//CFRelease(tmpApplicationBundleArray); // release CFURLRef
-	
+	return err;
 }
 
 
 //----------------------------------------------------------
-void applicationLister::updateApplicationsList(){
+OSStatus applicationLister::updateApplicationsList(){
 	
+	OSStatus err = noErr;
+	
+	CFURLRef meURL;
+	CFURLRef parentURL;
 	
 	DIR *dir = NULL;
-	struct dirent *entry;
-	struct stat st;
+	struct dirent *entry = NULL;
+	struct stat stateResult;
+	char pathBuffer[PATH_MAX];
 	
-	//if (applicationBundleArray) CFRelease(applicationBundleArray); // release if not null ?
 	CFArrayRemoveAllValues(applicationBundleArray);
 	
-	// get the path of our applications directory
-	applicationsDirectoryPath = getExecutablePath();
+	// get my own path
+	meURL = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
 	
-	size_t found;
-	found=applicationsDirectoryPath.find_last_of("/");
-	applicationsDirectoryPath = applicationsDirectoryPath.substr(0,found); // path to my folder
+	// get a CFURL of the parent directory
+	if (err == noErr){ 
+		parentURL = CFURLCreateCopyDeletingLastPathComponent (kCFAllocatorDefault, meURL);
+		if (parentURL == NULL) { err = true; }
+	}
 	
-	applicationsDirectoryPath+="/Applications/"; // path to the Applications directory
+	if (err == noErr){ 
+		applicationsDirectoryURL = CFURLCreateCopyAppendingPathComponent(kCFAllocatorDefault, parentURL, CFSTR("Applications"), true);
+		if (applicationsDirectoryURL == NULL) { err = true; }
+	}
+	
+	// get c_string version of URL
+	err = !CFURLGetFileSystemRepresentation ( 
+											 applicationsDirectoryURL,
+											 true,
+											 (UInt8 *)pathBuffer,
+											 PATH_MAX
+											 );
+	
+	// check if directory exist
+	if (err == noErr){
+		err = stat(pathBuffer,&stateResult);
+	} else printf("error\n");
 	
 	// find first level applications
-	findExecutable(applicationsDirectoryPath);
+	if (err == noErr){
+		err = findExecutable(applicationsDirectoryURL);
+	} else printf("error\n");
+	
+	CFShow(applicationBundleArray);
 	
 	
 	// find applications in sub directory
-	dir = opendir(applicationsDirectoryPath.c_str());
-	
-	string entry_name = "";
-    string ext = "";
-	string full_file_name;
-	
-	while ((entry = readdir(dir)) != NULL){
-		//turn it into a C++ string
-        entry_name = entry->d_name;
-		full_file_name= applicationsDirectoryPath + entry_name;
+	if (err == noErr){
+		dir = opendir(pathBuffer);
 		
-		//lets get the length of the string here as we query it again
-        int fileLen = entry_name.length();
-		
-		if(fileLen <= 0)continue; //if the name is not existant
-		if(entry_name[0] == '.')continue; //ignore invisible files, ./ and ../
-		
-		if (stat(full_file_name.c_str(), &st) != -1){
+		while ((entry = readdir(dir)) != NULL){
 			
-			const bool is_directory = (st.st_mode & S_IFDIR ) != 0;
-			
-			if (is_directory) {
-				findExecutable(full_file_name+"/");
+			if ((entry->d_name[0] != '\0')&&(entry->d_name[0] != '.')) //ignore invisible files, ./ and ../
+			{
+				string fullPath =string(pathBuffer)+"/"+string(entry->d_name);
+				//printf("%s\n",fullPath.c_str());
 				
-				//printf("%s\n",entry->d_name );
-				
+				if (stat(fullPath.c_str(), &stateResult) != -1){
+					const bool is_directory = (stateResult.st_mode & S_IFDIR ) != 0;
+					
+					if (is_directory) {
+						
+						printf("%s is a folder\n",entry->d_name);
+						CFStringRef subDirName = CFStringCreateWithCString( kCFAllocatorDefault, entry->d_name, kCFStringEncodingUTF8 );
+						CFURLRef subDirURL =CFURLCreateCopyAppendingPathComponent(kCFAllocatorDefault, applicationsDirectoryURL, subDirName, true);
+						CFRelease(subDirName);
+						findExecutable(subDirURL);
+					}
+					
+					else {
+						printf("%s is not a folder\n",entry->d_name);
+					}
+				}
 			}
+			
 		}
 		
+		if ( dir != NULL )
+		{
+			closedir( dir );
+			dir = NULL;
+		}
 	}
 	
-}
-
-//----------------------------------------------------------
-void applicationLister::dumpApplicationList(){
-
-	//CFShow(applicationBundleArray);
-}
-
-
-//----------------------------------------------------------
-string applicationLister::getExecutablePath(){
-	
-	char path[PATH_MAX];
-	
-	uint32_t size = sizeof(path);
-	(_NSGetExecutablePath(path, &size) == 0);
-	//if (_NSGetExecutablePath(path, &size) == 0)
-		//printf("executables folder path is : %s/Applications/\n", path);
-	//else
-		//printf("buffer too small; need size : %u\n", size);
-	
-	return string(path);
-	
+	return err;
 }

@@ -189,7 +189,6 @@ public:
 
 	void Bind( const IpEndpointName& localEndpoint )
 	{
-		printf("bind\rs");
 		struct sockaddr_in bindSockAddr;
 		SockaddrFromIpEndpointName( bindSockAddr, localEndpoint );
 

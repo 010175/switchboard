@@ -28,8 +28,9 @@
 using namespace std;
 
 struct application{
-	string name;
-	string path;
+	CFStringRef name;
+	CFStringRef path;
+	int		id;
 };
 
 
@@ -40,31 +41,22 @@ public:
 	applicationLister();
 	~applicationLister();
 	
-	void findExecutable(string path);
+	OSStatus findExecutable(CFURLRef enclosingDirectoryURL);
 	
-	void updateApplicationsList();
+	OSStatus updateApplicationsList();
 	
 	CFStringRef getApplicationName(int _index);
 	
 	CFStringRef getApplicationPath(int _index);
 	
 	CFStringRef getApplicationEnclosingDirectoryPath(int _index);
-	
-	CFStringRef getApplicationDescription(int _index);
-	
+			
 	int getApplicationCount();
-	
-	void dumpApplicationList();
-	
+		
 private:
 	
-	string applicationsDirectoryPath;
+	CFURLRef applicationsDirectoryURL;
 	
-	string getExecutablePath();
-	
-	vector<application> applicationsVector; // vector containing the applications list
-	
-	//CFArrayRef applicationBundleArray; // array of applications bundle in the Applications directory
 	CFMutableArrayRef applicationBundleArray; // array of applications bundle in the Applications directory
 	
 	

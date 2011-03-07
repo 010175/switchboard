@@ -5,7 +5,7 @@
  
  launchd_wrapper class
  
- File: 			launchd_wrapper.h
+ File: 			launchdWrapper.h
  Description: 	launchd wrapper
  
  
@@ -34,12 +34,12 @@
 using namespace std;
 extern char **environ;
 
-class launchd_wrapper{
+class launchdWrapper{
 	
 public:
 	
-	launchd_wrapper();
-	~launchd_wrapper();
+	launchdWrapper();
+	~launchdWrapper();
 	
 	void setProcessPath(CFStringRef _processPath);
 	void setProcessLabel(CFStringRef _processLabel);

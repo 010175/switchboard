@@ -12,28 +12,33 @@
 #define PROCESS_PLIST_FILE_NAME "switchboardProcess.plist"
 #define FOLDER_WATCHER_PLIST_FILE_NAME "folderWatcher.plist"
 
-#define MONOLITHE_WEB_CONSOLE_URL "http://localhost/~guillaume/monolithe_web_console/"
+#define DEFAULT_WEB_CONSOLE_URL "http://localhost/~guillaume/monolithe_web_console/"
 //#define MONOLITHE_WEB_CONSOLE_URL "http://www.010175.net/monolithe/"
 
-#define LOCATION "monolithe"
-
-#define kIPKeyCFStringRef CFSTR("IP")        // dictionary key
-#define kTimeKeyCFStringRef CFSTR("Time")    // dictionary key
+#define DEFAULT_LOCATION "nowhere"
 
 int activeProcessIndex = -1;
 int selectedProcessIndex = -1;
+int activeProcessIsDuplex = 0;
+
 double lastLaunchProcessTime = 0;
 
-applicationLister myApplicationlister;
+applicationLister myApplicationLister;
+launchdWrapper myLaunchdWrapper;
 
-launchd_wrapper myLaunchd_wrapper;
+// 
+CFStringRef location = CFSTR(DEFAULT_LOCATION);
+CFStringRef webConsoleUrl = CFSTR(DEFAULT_WEB_CONSOLE_URL);
 
+// osc
+ofxOscSender	sender;
 ofxOscReceiver	receiver;
 
 ofxNetworkUtils networkUtils;
 
 TiXmlDocument calendar_xml("calendar.xml");
 TiXmlDocument uploads_xml("uploads.xml");
+TiXmlDocument duplex_xml;
 
 #pragma mark get systeme time 
 double getSystemTime(){
@@ -48,7 +53,62 @@ double getSystemTime(){
 #pragma mark curl Send Process List call back
 size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t nmemb, void *stream){
 	
-	printf("%s\n",(char*) ptr);
+	//printf("web console call back: %s\n",(char*) ptr);
+	
+		
+	CFXMLTreeRef    cfXMLTree;
+	CFDataRef       xmlData;
+	char			buffer[1024];
+	CFIndex			bufferLenght;
+	
+	bufferLenght = sprintf(buffer, "%s",(char*) ptr);
+	
+	printf("%s", buffer);
+	
+	xmlData = CFDataCreate(kCFAllocatorDefault, (const UInt8 *)buffer, bufferLenght);
+	
+	
+	// Parse the XML and get the CFXMLTree.
+	cfXMLTree = CFXMLTreeCreateFromData(kCFAllocatorDefault,
+										xmlData,
+										NULL,
+										kCFXMLParserSkipWhitespace,
+										kCFXMLNodeCurrentVersion);
+	
+	
+	
+	CFXMLTreeRef    xmlTreeNode;
+	CFXMLNodeRef    xmlNode;
+	int             childCount;
+	int             index;
+	
+	// Get a count of the top level node’s children.
+	childCount = CFTreeGetChildCount(cfXMLTree);
+	
+	// Print the data string for each top-level node.
+	for (index = 0; index < childCount; index++) {
+		
+		CFXMLTreeRef    xmlTreeSubNode;
+		CFXMLNodeRef    xmlSubNode;
+		int             subChildCount;
+		int             subIndex;
+		
+		xmlTreeNode = CFTreeGetChildAtIndex(cfXMLTree, index);
+		xmlNode = CFXMLTreeGetNode(xmlTreeNode);
+		
+		CFShow(CFXMLNodeGetString(xmlNode));
+		
+		subChildCount = CFTreeGetChildCount(xmlTreeNode);
+		for (subIndex = 0; subIndex < subChildCount; subIndex++) {
+			
+			xmlTreeSubNode =  CFTreeGetChildAtIndex(xmlTreeNode, subIndex);
+			xmlSubNode = CFXMLTreeGetNode(xmlTreeSubNode);
+			//CFXMLNodeRef pp = 
+			CFShow(CFXMLNodeGetString(xmlSubNode));
+		}
+		
+	}
+	
 	return nmemb;
 }
 
@@ -80,25 +140,27 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 			
 			if ((desire_process_index>-1)&&(desire_process_index!=activeProcessIndex)){
 				
-				CFStringRef appPath = myApplicationlister.getApplicationPath(desire_process_index);
+				CFStringRef appPath = myApplicationLister.getApplicationPath(desire_process_index);
 				doFadeOperation(FillScreen, 0.2f, true);
 				
 				if (appPath == NULL) // double check if app name is not null.
 					appPath = CFSTR("Unnamed App");
 				
-				myLaunchd_wrapper.removeProcess(PROCESS_LABEL);	// load new process
+				myLaunchdWrapper.removeProcess(PROCESS_LABEL);	// load new process
 				
 				usleep(1000000); // give some break
 				
 				int pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appPath), kCFStringEncodingASCII);
 				char buffer[pathLength+1]; // buffer[nameLength+1];
 				assert(buffer != NULL);
-				bool success = CFStringGetCString(appPath, buffer, PATH_MAX, kCFStringEncodingASCII);
-				myLaunchd_wrapper.submitProcess(PROCESS_LABEL, buffer);
+				if (CFStringGetCString(appPath, buffer, PATH_MAX, kCFStringEncodingASCII))
+				{
+					myLaunchdWrapper.submitProcess(PROCESS_LABEL, buffer);
+					activeProcessIndex = desire_process_index;
+					sleep(2);
+				}
 				
-				activeProcessIndex = desire_process_index;
-				sleep(2);
-				doFadeOperation(CleanScreen, 0.2f, true);
+				doFadeOperation(CleanScreen, 0.2f, true); // fade out
 				sendProcessListToWebConsole();
 			}
 		}
@@ -121,7 +183,7 @@ void sendProcessListToWebConsole(){
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
 	
-	printf("%.2i:%.2i:%.2i Send Process List to Web Console\n", timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec);
+	//printf("%.2i:%.2i:%.2i Send Process List to Web Console\n", timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec);
 	
 	// setup curl
 	CURLcode ret;
@@ -137,9 +199,9 @@ void sendProcessListToWebConsole(){
 	CFStringRef processNameCFString;
 	
 	// build curl application list form
-	for (int i= 0 ; i < myApplicationlister.getApplicationCount(); i++){
+	for (int i= 0 ; i < myApplicationLister.getApplicationCount(); i++){
 		
-		processNameCFString = myApplicationlister.getApplicationName(i);
+		processNameCFString = myApplicationLister.getApplicationName(i);
 		char *bytes;
 		CFIndex length = CFStringGetLength(processNameCFString);
 		bytes = (char *)malloc( length + 1 );
@@ -147,20 +209,32 @@ void sendProcessListToWebConsole(){
 		
 		curl_formadd(&post, &last,
 					 CURLFORM_COPYNAME, "process_list[]",
-					 CURLFORM_COPYCONTENTS, bytes, CURLFORM_END);
+					 CURLFORM_COPYCONTENTS, bytes,
+					 // CURLFORM_COPYCONTENTS, randomch,
+					 CURLFORM_END);
+		
 	}
 	
 	
 	char idch[4];
 	sprintf(idch, "%i",activeProcessIndex);
 	
+	char duplexch[4];
+	sprintf(duplexch, "%i",activeProcessIsDuplex);
+	
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "process_active_index",
 				 CURLFORM_COPYCONTENTS, idch, CURLFORM_END);
 	
+	
+	curl_formadd(&post, &last,
+				 CURLFORM_COPYNAME, "process_active_is_duplex",
+				 CURLFORM_COPYCONTENTS, duplexch, CURLFORM_END);
+	
+	
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "location",
-				 CURLFORM_COPYCONTENTS, LOCATION, CURLFORM_END);
+				 CURLFORM_COPYCONTENTS, DEFAULT_LOCATION, CURLFORM_END);
 	
 	
 	curl_formadd(&post, &last,
@@ -170,7 +244,7 @@ void sendProcessListToWebConsole(){
 	
 	/* Set the form info */
 	curl_easy_setopt(hnd, CURLOPT_HTTPPOST, post);
-	curl_easy_setopt(hnd, CURLOPT_URL, MONOLITHE_WEB_CONSOLE_URL);
+	curl_easy_setopt(hnd, CURLOPT_URL, DEFAULT_WEB_CONSOLE_URL);
 	
 	ret = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
@@ -198,12 +272,12 @@ void getCalendarFromWebConsole(){
 	
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "location",
-				 CURLFORM_COPYCONTENTS, LOCATION, CURLFORM_END);
+				 CURLFORM_COPYCONTENTS, DEFAULT_LOCATION, CURLFORM_END);
 	
 	
 	/* Set the form info */
 	curl_easy_setopt(hnd, CURLOPT_HTTPPOST, post);
-	curl_easy_setopt(hnd, CURLOPT_URL, MONOLITHE_WEB_CONSOLE_URL);
+	curl_easy_setopt(hnd, CURLOPT_URL, DEFAULT_WEB_CONSOLE_URL);
 	
 	ret = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
@@ -247,20 +321,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			sm.setAddress("/monolithe/pong"); // pong back to remote
 			sm.addStringArg(networkUtils.getInterfaceAddress(0));
 			
-			try{
-				sender.sendMessage(sm);
-			}
-			catch (std::runtime_error &e) {
-				std::cout << "Caught a runtime_error exception: "
-				<< e.what () << '\n';
-			}
-			catch (std::exception &e) {
-				std::cout << "Caught an exception of an unexpected type: "
-				<< e.what () << '\n';
-			} 
-			catch (...) {
-				std::cout << "Caught an unknown exception\n";
-			}
+			sender.sendMessage(sm);
 			
 			break;
 		}
@@ -287,9 +348,9 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			doFadeOperation(FillScreen, 0.2f, true); // fade in
 			
 			//remove current process
-			myLaunchd_wrapper.removeProcess(PROCESS_LABEL);
+			myLaunchdWrapper.removeProcess(PROCESS_LABEL);
 			
-			CFStringRef appPath = myApplicationlister.getApplicationPath(appIndex);
+			CFStringRef appPath = myApplicationLister.getApplicationPath(appIndex);
 			
 			if (appPath == NULL) // double check if app name is not null.
 				appPath = CFSTR("Unnamed App");
@@ -299,13 +360,53 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			assert(filePath != NULL);
 			Boolean success = CFStringGetCString(appPath, filePath, PATH_MAX, kCFStringEncodingASCII);
 			
-			myLaunchd_wrapper.submitProcess(PROCESS_LABEL, filePath);
+			if (!success) { 
+				doFadeOperation(CleanScreen, 2.0f, true); // fade out
+				return;
+			}
+			myLaunchdWrapper.submitProcess(PROCESS_LABEL, filePath);
 			activeProcessIndex = appIndex;
+			
+			
+			// get duplex status
+			CFMutableStringRef appDuplexFilePath= CFStringCreateMutable(NULL, 0);
+			
+			if (appPath == NULL) // double check if app name is not null.
+				appPath = CFSTR("Path error");
+			
+			// build path to duplex  file (path/duplex)
+			CFStringAppend(appDuplexFilePath, myApplicationLister.getApplicationEnclosingDirectoryPath(appIndex));
+			CFStringAppend(appDuplexFilePath,CFSTR("/"));
+			CFStringAppend(appDuplexFilePath, CFSTR("duplex"));
+			
+			// lenght of path
+			pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appDuplexFilePath), kCFStringEncodingASCII);
+			
+			// check if duplex file exist
+			char  duplexFilePath[FILENAME_MAX]; // buffer[pathLength+1];
+			assert(duplexFilePath != NULL);
+			
+			// CFString to c_string
+			CFStringGetCString(appDuplexFilePath, duplexFilePath, FILENAME_MAX, kCFStringEncodingASCII);
+			
+			CFRelease(appDuplexFilePath);
+			
+			// check if duplex file or directory exist
+			struct stat st;
+			if(stat(duplexFilePath,&st) == 0){
+				printf("process is duplex\n");
+				activeProcessIsDuplex = true;
+				
+			} else {
+				printf("process is not duplex\n");
+				activeProcessIsDuplex= false;
+			}
+			// end duplex status
 			
 			int i=5;
 			do {
 				usleep(2000000); // give some break
-			} while ((--i)&&(!myLaunchd_wrapper.isProcessRunning(PROCESS_LABEL)));
+			} while ((--i)&&(!myLaunchdWrapper.isProcessRunning(PROCESS_LABEL)));
 			
 			
 			doFadeOperation(CleanScreen, 2.0f, true); // fade out
@@ -314,7 +415,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 			
 			// set process to front
-			int pid = myLaunchd_wrapper.getPIDForProcessLabel(PROCESS_LABEL);
+			int pid = myLaunchdWrapper.getPIDForProcessLabel(PROCESS_LABEL);
 			printf("pid is %i\r", pid);
 			
 			ProcessSerialNumber psn;
@@ -325,7 +426,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 			OSErr er = SetFrontProcess(&psn);
 			printf("error ? %i\r", er);
-
+			
 			sendProcessListToWebConsoleThread.start();
 			
 			break;
@@ -340,15 +441,15 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			ofxOscMessage sm;
 			
 			sm.setAddress("/monolithe/setprocesslist");
-			myApplicationlister.updateApplicationsList();
+			int i = myApplicationLister.updateApplicationsList();
 			
-			for (int i = 0; i<myApplicationlister.getApplicationCount();i++){
+			for (int i = 0; i<myApplicationLister.getApplicationCount();i++){
 				
 				// CFStringRef to CString complicated mess
 				CFIndex          nameLength;
 				Boolean          success;
 				
-				CFStringRef appName = myApplicationlister.getApplicationName(i);
+				CFStringRef appName = myApplicationLister.getApplicationName(i);
 				
 				if (appName == NULL) // double check if app name is not null.
 					appName = CFSTR("Unnamed App");
@@ -368,21 +469,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				}					
 			}
 			
-			try{
-				sender.sendMessage(sm);
-			}
-			catch (std::runtime_error &e) {
-				std::cout << "Caught a runtime_error exception: "
-				<< e.what () << '\n';
-			}
-			catch (std::exception &e) {
-				std::cout << "Caught an exception of an unexpected type: "
-				<< e.what () << '\n';
-			} 
-			catch (...) {
-				std::cout << "Caught an unknown exception\n";
-			}
-			
+			sender.sendMessage(sm);
 			
 			break;
 		}
@@ -397,20 +484,8 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			sm.setAddress("/monolithe/setprocessindex");
 			sm.addIntArg(activeProcessIndex);	
 			
-			try{
-				sender.sendMessage(sm);
-			}
-			catch (std::runtime_error &e) {
-				std::cout << "Caught a runtime_error exception: "
-				<< e.what () << '\n';
-			}
-			catch (std::exception &e) {
-				std::cout << "Caught an exception of an unexpected type: "
-				<< e.what () << '\n';
-			} 
-			catch (...) {
-				std::cout << "Caught an unknown exception\n";
-			}
+			sender.sendMessage(sm);
+			
 			
 			break;
 			
@@ -430,7 +505,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			CFIndex          pathLength;
 			Boolean          success;
 			
-			CFStringRef appPath = myApplicationlister.getApplicationEnclosingDirectoryPath(appIndex);
+			CFStringRef appPath = myApplicationLister.getApplicationEnclosingDirectoryPath(appIndex);
 			CFMutableStringRef appXmlDescriptionFilePath= CFStringCreateMutable(NULL, 0);
 			
 			if (appPath == NULL) // double check if app name is not null.
@@ -439,12 +514,12 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			// build path to xml description file (path/application_name.xml)
 			CFStringAppend(appXmlDescriptionFilePath, appPath);
 			CFStringAppend(appXmlDescriptionFilePath,CFSTR("/"));
-			CFStringAppend(appXmlDescriptionFilePath, myApplicationlister.getApplicationName(appIndex));
+			CFStringAppend(appXmlDescriptionFilePath, myApplicationLister.getApplicationName(appIndex));
 			CFStringAppend(appXmlDescriptionFilePath, CFSTR(".xml"));
 			
 			// lenght of path
 			pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appXmlDescriptionFilePath), kCFStringEncodingASCII);
-		
+			
 			// open xml file and send it
 			char             filePath[FILENAME_MAX]; // buffer[pathLength+1];
 			assert(filePath != NULL);
@@ -469,53 +544,56 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				
 				existanceChecker.close();
 				
-				ifstream::pos_type size;
-				char * memblock;
+				ifstream::pos_type length;
+				char * buffer;
 				
 				std::ifstream inFile(filePath,ios::in|ios::binary|ios::ate);
 				if (!inFile.is_open())
 					return;
 				
-				size = inFile.tellg();
-				memblock = new char [size];
+				// get length of file:
+				inFile.seekg (0, ios::end);
+				length = inFile.tellg();
 				inFile.seekg (0, ios::beg);
-				inFile.read (memblock, size);
+				
+				// allocate memory:
+				buffer = new char [length];
+				
+				// read data as a block:
+				inFile.read (buffer,length);
+				
 				inFile.close();
 				
-				cout << "the complete file content is in memory : " << size << "bytes\n";
+				/*inFile.seekg (0, ios::beg);
+				size = inFile.tellg();
 				
-				sm.addStringArg(memblock);
+				memblock = new char [size];
+
+				inFile.read (memblock, size);
+				inFile.close();
+				*/
 				
-				delete[] memblock;
+				cout << "the complete file content is in memory : " << length << "bytes\n";
 				
-				try{
-					sender.sendMessage(sm);
-				}
-				catch (std::runtime_error &e) {
-					std::cout << "Caught a runtime_error exception: "
-					<< e.what () << '\n';
-				}
-				catch (std::exception &e) {
-					std::cout << "Caught an exception of an unexpected type: "
-					<< e.what () << '\n';
-				} 
-				catch (...) {
-					std::cout << "Caught an unknown exception\n";
-				}
+				sm.addStringArg(buffer);
+				
+				delete[] buffer;
+				
+				sender.sendMessage(sm);
 				break;
 				
 			}else printf("error getting application description\r");
-				
+			
 		}					
 		
-	
+		
 		// stop current process
 #pragma mark osc stop process
 		if ( rm.getAddress() == "/monolithe/stopprocess" ) 
 		{
 			sender.setup(rm.getRemoteIp(), _SENDER_PORT); // reset sender remote ip
 			
-			myLaunchd_wrapper.removeProcess(PROCESS_LABEL); // unload current process
+			myLaunchdWrapper.removeProcess(PROCESS_LABEL); // unload current process
 			
 			activeProcessIndex = -1;
 			
@@ -528,8 +606,17 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		// new application aviable
 		if ( rm.getAddress() == "/monolithe/newapplication" ) 
 		{
-			break;
+			
+			ofxOscMessage sm;
+			sm.setAddress("/monolithe/setprocessindex");
+			sm.addIntArg(activeProcessIndex);	
+			
+			
+			sender.sendMessage(sm);
+			
 			sendProcessListToWebConsoleThread.start();
+			break;
+			
 		}
 		
 	}
@@ -537,7 +624,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 
 void webConsoleTimerFunction(CFRunLoopTimerRef timer, void *info)
 {
-	printf("web console timer function");
+	//printf("web console timer function");
 	sendProcessListToWebConsoleThread.start();
 }
 
@@ -595,7 +682,9 @@ void InstallExceptionHandler()
 	 }
 	 */
 	
-	signal(SIGABRT, SignalHandler);
+	signal(SIGABRT, SIG_IGN);
+	
+	//signal(SIGABRT, SignalHandler);
 	signal(SIGILL, SignalHandler);
 	signal(SIGSEGV, SignalHandler);
 	signal(SIGFPE, SignalHandler);
@@ -614,55 +703,69 @@ void InstallExceptionHandler()
 	
 }
 
+#pragma mark preferences
+void readPreferences()
+{
+	
+	// build url to xml pref file
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+	CFURLRef	mainBundleURL = CFBundleCopyBundleURL(mainBundle);
+	CFURLRef	preferenceFileURL = CFURLCreateCopyAppendingPathComponent(kCFAllocatorDefault,
+																		  mainBundleURL,
+																		  CFSTR("preferences.plist"),
+																		  false);
+	CFPropertyListRef	propertyList;
+	CFDataRef			resourceData;
+	CFStringRef			errorString;
+	SInt32				errorCode;
+	
+	// Read the XML file.
+	CFURLCreateDataAndPropertiesFromResource(
+											 kCFAllocatorDefault,
+											 preferenceFileURL,
+											 &resourceData,            // place to put file data
+											 NULL,
+											 NULL,
+											 &errorCode);
+	
+	// Reconstitute the dictionary using the XML data.
+	propertyList = CFPropertyListCreateFromXMLData( kCFAllocatorDefault,
+												   resourceData,
+												   kCFPropertyListImmutable,
+												   &errorString);
+	
+	CFRelease( resourceData );
+	CFShow(errorString);
+	
+	if (CFGetTypeID(propertyList)==CFDictionaryGetTypeID()){
+		
+		// set values from plist file if exist
+		CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Location"), (const void **)&location);
+		CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Web Console URL"), (const void **)&webConsoleUrl);
+		
+		CFShow(location);
+		CFShow(webConsoleUrl);
 
-// Callback for the notification
-static void myNotificationCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
-	
-    // We get the new price out of the user info dictionary
-    // We also get the stock symbol out of there (true, the object is also
-    //   the stock symbol, but that can be NULL, if the registry was made for "all")
-    std::cout<<"notification !"<< '\n';
-	
-	CFShow(name);
-	
-    if (userInfo) {
-		std::cout<<"notification !"<< '\n';
-		/*
-		 CFNumberRef newPriceNum = CFDictionaryGetValue(userInfo, CFSTR("NSWorkspaceApplicationKey"));
-		 if (newPriceNum) CFNumberGetValue(newPriceNum, kCFNumberDoubleType, &newPrice);
-		 stockSymbol = CFDictionaryGetValue(userInfo, CFSTR("Stock Symbol"));
-		 */
-    }	
+	}
 }
 
 #pragma mark main
 int main (int argc, const char * argv[]) {
-	printf("%s", argv[0]);
-	
 	// Set up a signal handler so we can clean up when we're interrupted from the command line
 	InstallExceptionHandler();
-	
-	CFNotificationCenterRef center = CFNotificationCenterGetDistributedCenter();
-	
-	//CFNotificationCenterAddObserver(CFNotificationCenterRef center, const void *observer, CFNotificationCallback callBack, CFStringRef name, const void *object, CFNotificationSuspensionBehavior suspensionBehavior);
-	CFNotificationCenterAddObserver(center, NULL, myNotificationCallback,CFSTR(kIOPublishNotification),  NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
-	
-	// init client list array
-	clientListDictionnary =CFDictionaryCreateMutable (kCFAllocatorDefault,
-													  0,
-													  NULL,
-													  NULL
-													  );
+
+	// preferences
+	readPreferences();
 	
 	// setup runLoops
 	CFRunLoopRef		mRunLoopRef;
 	mRunLoopRef = CFRunLoopGetCurrent();
 	
-	CFRunLoopTimerRef oscTimer =		CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + 1, 1, 0, 0, oscMessagesTimerFunction, NULL); // 1 sec
-	//CFRunLoopTimerRef webConsoleTimer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + 2, 2, 0, 0, webConsoleTimerFunction, NULL); // 2 sec
+	CFRunLoopTimerRef oscTimer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + 1, 1, 0, 0, oscMessagesTimerFunction, NULL); // 1 sec
+	CFRunLoopTimerRef webConsoleTimer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + 4, 4, 0, 0, webConsoleTimerFunction, NULL); // 4 sec
 	
 	CFRunLoopAddTimer(mRunLoopRef, oscTimer, kCFRunLoopDefaultMode);
-	//CFRunLoopAddTimer(mRunLoopRef, webConsoleTimer, kCFRunLoopDefaultMode);
+	CFRunLoopAddTimer(mRunLoopRef, webConsoleTimer, kCFRunLoopDefaultMode);
 	
 	// init networkUtils
 	networkUtils.init();
@@ -671,7 +774,7 @@ int main (int argc, const char * argv[]) {
 	receiver.setup(_RECEIVER_PORT);
 	
 	// unload running switchboard launchd process
-	myLaunchd_wrapper.removeProcess(PROCESS_LABEL);
+	myLaunchdWrapper.removeProcess(PROCESS_LABEL);
 	
 	// start the loop
 	CFRunLoopRun();
@@ -679,7 +782,7 @@ int main (int argc, const char * argv[]) {
 	sendProcessListToWebConsoleThread.stop();
 	
 	// unload running switchboard launchd process
-	myLaunchd_wrapper.removeProcess(PROCESS_LABEL);
+	myLaunchdWrapper.removeProcess(PROCESS_LABEL);
 	
 	printf("END\n");
 	return 0;

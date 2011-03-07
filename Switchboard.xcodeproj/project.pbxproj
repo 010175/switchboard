@@ -14,7 +14,7 @@
 		F00A26A91190460D00E9BCDF /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F00A269A1190460D00E9BCDF /* tinyxmlerror.cpp */; };
 		F00A26AA1190460D00E9BCDF /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F00A269B1190460D00E9BCDF /* tinyxmlparser.cpp */; };
 		F00A280611907C0500E9BCDF /* ofxNetworkUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F00A280411907C0500E9BCDF /* ofxNetworkUtils.cpp */; };
-		F010D76710E907FC00342293 /* application_lister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F010D76610E907FC00342293 /* application_lister.cpp */; };
+		F010D76710E907FC00342293 /* applicationLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F010D76610E907FC00342293 /* applicationLister.cpp */; };
 		F010DC2E10ECDEE800342293 /* libcurses.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F010DC2D10ECDEE800342293 /* libcurses.dylib */; };
 		F024F66A10E7FAA300828192 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F024F66910E7FAA300828192 /* Security.framework */; };
 		F095A00F115A24CE0094892D /* screen_fader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F095A00E115A24CE0094892D /* screen_fader.cpp */; };
@@ -30,7 +30,7 @@
 		F0A385E9130143DA00CE917D /* ofxOscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0A385D7130143DA00CE917D /* ofxOscMessage.cpp */; };
 		F0A385EA130143DA00CE917D /* ofxOscReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0A385D9130143DA00CE917D /* ofxOscReceiver.cpp */; };
 		F0A385EB130143DA00CE917D /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0A385DB130143DA00CE917D /* ofxOscSender.cpp */; };
-		F0B925FA12E08F19001673C1 /* launchd_wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0B925F912E08F19001673C1 /* launchd_wrapper.cpp */; };
+		F0B925FA12E08F19001673C1 /* launchdWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0B925F912E08F19001673C1 /* launchdWrapper.cpp */; };
 		F0BE070411788F1400F8E613 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F0BE070311788F1400F8E613 /* libcurl.dylib */; };
 		F0E312ED11304260000979F7 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E312EC11304260000979F7 /* CoreVideo.framework */; };
 		F0E313041130428B000979F7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0E313031130428B000979F7 /* CoreServices.framework */; };
@@ -61,8 +61,8 @@
 		F00A269B1190460D00E9BCDF /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		F00A280411907C0500E9BCDF /* ofxNetworkUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxNetworkUtils.cpp; sourceTree = "<group>"; };
 		F00A280511907C0500E9BCDF /* ofxNetworkUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxNetworkUtils.h; sourceTree = "<group>"; };
-		F010D76510E907FC00342293 /* application_lister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = application_lister.h; sourceTree = "<group>"; };
-		F010D76610E907FC00342293 /* application_lister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = application_lister.cpp; sourceTree = "<group>"; };
+		F010D76510E907FC00342293 /* applicationLister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = applicationLister.h; sourceTree = "<group>"; };
+		F010D76610E907FC00342293 /* applicationLister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = applicationLister.cpp; sourceTree = "<group>"; };
 		F010DC2D10ECDEE800342293 /* libcurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurses.dylib; path = usr/lib/libcurses.dylib; sourceTree = SDKROOT; };
 		F024F66910E7FAA300828192 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		F02967E71135C9D800C5582F /* code mess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "code mess"; sourceTree = "<group>"; };
@@ -103,8 +103,8 @@
 		F0A385DA130143DA00CE917D /* ofxOscReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscReceiver.h; sourceTree = "<group>"; };
 		F0A385DB130143DA00CE917D /* ofxOscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscSender.cpp; sourceTree = "<group>"; };
 		F0A385DC130143DA00CE917D /* ofxOscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscSender.h; sourceTree = "<group>"; };
-		F0B925F812E08F19001673C1 /* launchd_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = launchd_wrapper.h; sourceTree = "<group>"; };
-		F0B925F912E08F19001673C1 /* launchd_wrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = launchd_wrapper.cpp; sourceTree = "<group>"; };
+		F0B925F812E08F19001673C1 /* launchdWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = launchdWrapper.h; sourceTree = "<group>"; };
+		F0B925F912E08F19001673C1 /* launchdWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = launchdWrapper.cpp; sourceTree = "<group>"; };
 		F0BE070311788F1400F8E613 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		F0E312EC11304260000979F7 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F0E313031130428B000979F7 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
@@ -155,10 +155,10 @@
 				F0A1521210F4A4EC00BB373F /* ip */,
 				08FB7796FE84155DC02AAC07 /* Switchboard.cpp */,
 				F038BBA0116DE7D3008F3116 /* Switchboard.h */,
-				F0B925F912E08F19001673C1 /* launchd_wrapper.cpp */,
-				F0B925F812E08F19001673C1 /* launchd_wrapper.h */,
-				F010D76510E907FC00342293 /* application_lister.h */,
-				F010D76610E907FC00342293 /* application_lister.cpp */,
+				F0B925F812E08F19001673C1 /* launchdWrapper.h */,
+				F0B925F912E08F19001673C1 /* launchdWrapper.cpp */,
+				F010D76510E907FC00342293 /* applicationLister.h */,
+				F010D76610E907FC00342293 /* applicationLister.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -342,7 +342,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F770486A8DE00D96B5E /* Switchboard.cpp in Sources */,
-				F010D76710E907FC00342293 /* application_lister.cpp in Sources */,
+				F010D76710E907FC00342293 /* applicationLister.cpp in Sources */,
 				F0A1521F10F4A4EC00BB373F /* IpEndpointName.cpp in Sources */,
 				F0A1522010F4A4EC00BB373F /* NetworkingUtils.cpp in Sources */,
 				F0A1522110F4A4EC00BB373F /* UdpSocket.cpp in Sources */,
@@ -353,7 +353,7 @@
 				F00A26A91190460D00E9BCDF /* tinyxmlerror.cpp in Sources */,
 				F00A26AA1190460D00E9BCDF /* tinyxmlparser.cpp in Sources */,
 				F00A280611907C0500E9BCDF /* ofxNetworkUtils.cpp in Sources */,
-				F0B925FA12E08F19001673C1 /* launchd_wrapper.cpp in Sources */,
+				F0B925FA12E08F19001673C1 /* launchdWrapper.cpp in Sources */,
 				F0A385E4130143DA00CE917D /* OscOutboundPacketStream.cpp in Sources */,
 				F0A385E5130143DA00CE917D /* OscPrintReceivedElements.cpp in Sources */,
 				F0A385E6130143DA00CE917D /* OscReceivedElements.cpp in Sources */,

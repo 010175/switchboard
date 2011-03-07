@@ -28,9 +28,9 @@
 #include <time.h>
 #include "sys/time.h"
 
-#include "application_lister.h"
+#include "applicationLister.h"
 
-#include "launchd_wrapper.h"
+#include "launchdWrapper.h"
 
 #include "ip/UdpSocket.h"
 #include "ip/PacketListener.h"
@@ -55,9 +55,6 @@ double getSystemTime();
 void SignalHandler(int signal);
 void InstallExceptionHandler();
 
-// notification callback
-static void myNotificationCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo);
-
 // curl callbacks
 size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t nmemb, void *stream);
 size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stream);
@@ -70,18 +67,15 @@ void getCalendarFromWebConsole();
 void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info);
 void webConsoleTimerFunction(CFRunLoopTimerRef timer, void *info);
 
+// read preferences
+void readPreferences();
+
 // main function
 int main (int argc, const char * argv[]);
 
 // curl threaded function
 #include "curlSendProcessListThreadedObject.h"
 curlSendProcessListThreadedObject sendProcessListToWebConsoleThread;
-
-// osc
-ofxOscSender sender;
-
-// client ip array
-CFMutableDictionaryRef clientListDictionnary;
 
 
 #endif
