@@ -255,8 +255,15 @@ void sendProcessListToWebConsole(){
 	
 	
 	/* Set the form info */
+	
+	// CFString to c_string
+	char  webConsoleString[PATH_MAX]; // buffer
+
+	CFStringGetCString(webConsoleURL, webConsoleString, PATH_MAX, kCFStringEncodingASCII);
+	printf("%s\n",webConsoleString);
+	
 	curl_easy_setopt(hnd, CURLOPT_HTTPPOST, post);
-	curl_easy_setopt(hnd, CURLOPT_URL, DEFAULT_WEB_CONSOLE_URL);
+	curl_easy_setopt(hnd, CURLOPT_URL, webConsoleString);
 	
 	ret = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
@@ -722,7 +729,8 @@ void readPreferences()
 												   NULL,
 												   &errorCode);
 	
-	if (!noErr==err) return;
+	
+	//if (!noErr==err) return;
 	
 	// Reconstitute the dictionary using the XML data.
 	if (errorCode==0){
@@ -739,13 +747,12 @@ void readPreferences()
 			CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Location"), (const void **)&location);
 			CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Web Console URL"), (const void **)&webConsoleURL);
 			
-		
-			
 		}
 	}else {
 		
 		NSLog(CFSTR("preferences read error %i"), errorCode);
 	}
+	
 	
 	NSLog(CFSTR("location : %@"), location);
 	NSLog(CFSTR("Web Console URL : %@"), webConsoleURL);

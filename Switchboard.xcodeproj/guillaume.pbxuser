@@ -280,6 +280,35 @@
 			F047026C13262F3A003450E4 /* PBXTextBookmark */ = F047026C13262F3A003450E4 /* PBXTextBookmark */;
 			F047026D13262F88003450E4 /* PBXTextBookmark */ = F047026D13262F88003450E4 /* PBXTextBookmark */;
 			F047026F13262FF4003450E4 /* PBXTextBookmark */ = F047026F13262FF4003450E4 /* PBXTextBookmark */;
+			F0470272132632A1003450E4 /* PBXTextBookmark */ = F0470272132632A1003450E4 /* PBXTextBookmark */;
+			F0470273132632A1003450E4 /* PBXTextBookmark */ = F0470273132632A1003450E4 /* PBXTextBookmark */;
+			F0470274132632B4003450E4 /* PBXTextBookmark */ = F0470274132632B4003450E4 /* PBXTextBookmark */;
+			F047027D1326336E003450E4 /* PBXTextBookmark */ = F047027D1326336E003450E4 /* PBXTextBookmark */;
+			F047027E1326336E003450E4 /* PBXTextBookmark */ = F047027E1326336E003450E4 /* PBXTextBookmark */;
+			F047027F1326336E003450E4 /* PBXTextBookmark */ = F047027F1326336E003450E4 /* PBXTextBookmark */;
+			F04702801326336E003450E4 /* PBXTextBookmark */ = F04702801326336E003450E4 /* PBXTextBookmark */;
+			F047028113263371003450E4 /* PBXTextBookmark */ = F047028113263371003450E4 /* PBXTextBookmark */;
+			F047028213263371003450E4 /* PBXTextBookmark */ = F047028213263371003450E4 /* PBXTextBookmark */;
+			F04702851326338A003450E4 /* PBXTextBookmark */ = F04702851326338A003450E4 /* PBXTextBookmark */;
+			F04702861326338A003450E4 /* PBXTextBookmark */ = F04702861326338A003450E4 /* PBXTextBookmark */;
+			F047028713263392003450E4 /* PBXTextBookmark */ = F047028713263392003450E4 /* PBXTextBookmark */;
+			F047028813263392003450E4 /* PBXTextBookmark */ = F047028813263392003450E4 /* PBXTextBookmark */;
+			F047028B132633B8003450E4 /* PBXTextBookmark */ = F047028B132633B8003450E4 /* PBXTextBookmark */;
+			F047028C132633B8003450E4 /* PBXTextBookmark */ = F047028C132633B8003450E4 /* PBXTextBookmark */;
+			F047028F132633C2003450E4 /* PBXTextBookmark */ = F047028F132633C2003450E4 /* PBXTextBookmark */;
+			F0470290132633C2003450E4 /* PBXTextBookmark */ = F0470290132633C2003450E4 /* PBXTextBookmark */;
+			F0470293132633DD003450E4 /* PBXTextBookmark */ = F0470293132633DD003450E4 /* PBXTextBookmark */;
+			F0470294132633DD003450E4 /* PBXTextBookmark */ = F0470294132633DD003450E4 /* PBXTextBookmark */;
+			F047029713263414003450E4 /* PBXTextBookmark */ = F047029713263414003450E4 /* PBXTextBookmark */;
+			F047029813263414003450E4 /* PBXTextBookmark */ = F047029813263414003450E4 /* PBXTextBookmark */;
+			F047029B13263437003450E4 /* PBXTextBookmark */ = F047029B13263437003450E4 /* PBXTextBookmark */;
+			F047029C13263437003450E4 /* PBXTextBookmark */ = F047029C13263437003450E4 /* PBXTextBookmark */;
+			F047029F13263464003450E4 /* PBXTextBookmark */ = F047029F13263464003450E4 /* PBXTextBookmark */;
+			F04702A013263464003450E4 /* PBXTextBookmark */ = F04702A013263464003450E4 /* PBXTextBookmark */;
+			F04702A113263483003450E4 /* PBXTextBookmark */ = F04702A113263483003450E4 /* PBXTextBookmark */;
+			F04702A213263483003450E4 /* PlistBookmark */ = F04702A213263483003450E4 /* PlistBookmark */;
+			F04702A313263483003450E4 /* PBXTextBookmark */ = F04702A313263483003450E4 /* PBXTextBookmark */;
+			F04702A413263483003450E4 /* PBXTextBookmark */ = F04702A413263483003450E4 /* PBXTextBookmark */;
 			F047FB61131CCFDC003450E4 = F047FB61131CCFDC003450E4 /* PBXTextBookmark */;
 			F047FBEF131FAE65003450E4 /* PBXTextBookmark */ = F047FBEF131FAE65003450E4 /* PBXTextBookmark */;
 			F047FC01131FB52C003450E4 /* XCBuildMessageTextBookmark */ = F047FC01131FB52C003450E4 /* XCBuildMessageTextBookmark */;
@@ -633,9 +662,9 @@
 	};
 	08FB7796FE84155DC02AAC07 /* Switchboard.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {986, 11242}}";
-			sepNavSelRange = "{427, 0}";
-			sepNavVisRange = "{0, 1074}";
+			sepNavIntBoundsRect = "{{0, 0}, {986, 11466}}";
+			sepNavSelRange = "{20394, 0}";
+			sepNavVisRange = "{19265, 1248}";
 			sepNavWindowFrame = "{{564, -38}, {807, 648}}";
 		};
 	};
@@ -1444,7 +1473,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		fallbackIsa = XCBuildMessageTextBookmark;
 		rLen = 1;
-		rLoc = 465;
+		rLoc = 472;
 		rType = 1;
 	};
 	F04700B213256419003450E4 /* PBXTextBookmark */ = {
@@ -1452,7 +1481,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 444";
 		rLen = 0;
-		rLoc = 12916;
+		rLoc = 13106;
 		rType = 0;
 		vrLen = 982;
 		vrLoc = 12008;
@@ -1472,7 +1501,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 444";
 		rLen = 0;
-		rLoc = 12916;
+		rLoc = 13106;
 		rType = 0;
 		vrLen = 982;
 		vrLoc = 12008;
@@ -1492,7 +1521,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 765";
 		rLen = 0;
-		rLoc = 20786;
+		rLoc = 20975;
 		rType = 0;
 		vrLen = 1694;
 		vrLoc = 21522;
@@ -1602,7 +1631,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 444";
 		rLen = 0;
-		rLoc = 12916;
+		rLoc = 13106;
 		rType = 0;
 		vrLen = 982;
 		vrLoc = 12008;
@@ -1632,7 +1661,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 444";
 		rLen = 0;
-		rLoc = 12916;
+		rLoc = 13106;
 		rType = 0;
 		vrLen = 982;
 		vrLoc = 12008;
@@ -1652,7 +1681,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 444";
 		rLen = 0;
-		rLoc = 12916;
+		rLoc = 13106;
 		rType = 0;
 		vrLen = 982;
 		vrLoc = 12008;
@@ -1773,7 +1802,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		fallbackIsa = XCBuildMessageTextBookmark;
 		rLen = 1;
-		rLoc = 465;
+		rLoc = 472;
 		rType = 1;
 	};
 	F047015013259F02003450E4 /* PBXTextBookmark */ = {
@@ -1781,7 +1810,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 444";
 		rLen = 0;
-		rLoc = 12919;
+		rLoc = 13109;
 		rType = 0;
 		vrLen = 892;
 		vrLoc = 12586;
@@ -1801,7 +1830,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 454";
 		rLen = 0;
-		rLoc = 12919;
+		rLoc = 13109;
 		rType = 0;
 		vrLen = 686;
 		vrLoc = 13325;
@@ -1950,7 +1979,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 344";
 		rLen = 0;
-		rLoc = 9462;
+		rLoc = 9652;
 		rType = 0;
 		vrLen = 1543;
 		vrLoc = 8879;
@@ -1960,7 +1989,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 791";
 		rLen = 0;
-		rLoc = 21281;
+		rLoc = 21470;
 		rType = 0;
 		vrLen = 1287;
 		vrLoc = 22397;
@@ -1990,7 +2019,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 331";
 		rLen = 10;
-		rLoc = 9086;
+		rLoc = 9276;
 		rType = 0;
 		vrLen = 1416;
 		vrLoc = 8695;
@@ -2087,7 +2116,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 734";
 		rLen = 40;
-		rLoc = 19217;
+		rLoc = 19407;
 		rType = 0;
 		vrLen = 1348;
 		vrLoc = 21364;
@@ -2097,7 +2126,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 743";
 		rLen = 0;
-		rLoc = 19552;
+		rLoc = 19746;
 		rType = 0;
 		vrLen = 1379;
 		vrLoc = 21364;
@@ -2107,7 +2136,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 763";
 		rLen = 0;
-		rLoc = 20144;
+		rLoc = 20331;
 		rType = 0;
 		vrLen = 1374;
 		vrLoc = 21646;
@@ -2117,7 +2146,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 764";
 		rLen = 0;
-		rLoc = 20144;
+		rLoc = 20331;
 		rType = 0;
 		vrLen = 1321;
 		vrLoc = 21392;
@@ -2127,7 +2156,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 768";
 		rLen = 0;
-		rLoc = 20301;
+		rLoc = 20490;
 		rType = 0;
 		vrLen = 1267;
 		vrLoc = 21452;
@@ -2177,7 +2206,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 767";
 		rLen = 0;
-		rLoc = 20212;
+		rLoc = 20401;
 		rType = 0;
 		vrLen = 1267;
 		vrLoc = 21480;
@@ -2187,7 +2216,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 767";
 		rLen = 0;
-		rLoc = 20212;
+		rLoc = 20401;
 		rType = 0;
 		vrLen = 1258;
 		vrLoc = 21527;
@@ -2197,7 +2226,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 767";
 		rLen = 0;
-		rLoc = 20245;
+		rLoc = 20434;
 		rType = 0;
 		vrLen = 1279;
 		vrLoc = 21527;
@@ -2246,7 +2275,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 767";
 		rLen = 0;
-		rLoc = 20245;
+		rLoc = 20434;
 		rType = 0;
 		vrLen = 1138;
 		vrLoc = 0;
@@ -2356,7 +2385,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 678";
 		rLen = 0;
-		rLoc = 18196;
+		rLoc = 18386;
 		rType = 0;
 		vrLen = 1063;
 		vrLoc = 18122;
@@ -2366,7 +2395,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 678";
 		rLen = 0;
-		rLoc = 18196;
+		rLoc = 18386;
 		rType = 0;
 		vrLen = 1199;
 		vrLoc = 18128;
@@ -2461,6 +2490,297 @@
 		vrLen = 1074;
 		vrLoc = 0;
 	};
+	F0470272132632A1003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1098;
+		vrLoc = 6151;
+	};
+	F0470273132632A1003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 899;
+		vrLoc = 11800;
+	};
+	F0470274132632B4003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 259";
+		rLen = 16;
+		rLoc = 7123;
+		rType = 0;
+		vrLen = 1121;
+		vrLoc = 6178;
+	};
+	F047027D1326336E003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 758";
+		rLen = 13;
+		rLoc = 20475;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	F047027E1326336E003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0E315191131C2BD000979F7 /* CFString.h */;
+		name = "CFString.h: 283";
+		rLen = 112;
+		rLoc = 14203;
+		rType = 0;
+		vrLen = 2364;
+		vrLoc = 13153;
+	};
+	F047027F1326336E003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 263";
+		rLen = 18;
+		rLoc = 6916;
+		rType = 0;
+		vrLen = 1084;
+		vrLoc = 6219;
+	};
+	F04702801326336E003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 260";
+		rLen = 0;
+		rLoc = 6913;
+		rType = 0;
+		vrLen = 1072;
+		vrLoc = 6240;
+	};
+	F047028113263371003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1262;
+		vrLoc = 6151;
+	};
+	F047028213263371003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 996;
+		vrLoc = 11839;
+	};
+	F04702851326338A003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 758";
+		rLen = 13;
+		rLoc = 20475;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	F04702861326338A003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 263";
+		rLen = 0;
+		rLoc = 7034;
+		rType = 0;
+		vrLen = 1131;
+		vrLoc = 6288;
+	};
+	F047028713263392003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1262;
+		vrLoc = 6151;
+	};
+	F047028813263392003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 11918;
+	};
+	F047028B132633B8003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1262;
+		vrLoc = 6151;
+	};
+	F047028C132633B8003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 988;
+		vrLoc = 11920;
+	};
+	F047028F132633C2003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1262;
+		vrLoc = 6151;
+	};
+	F0470290132633C2003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 1022;
+		vrLoc = 11949;
+	};
+	F0470293132633DD003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1262;
+		vrLoc = 6151;
+	};
+	F0470294132633DD003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 1051;
+		vrLoc = 11995;
+	};
+	F047029713263414003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1262;
+		vrLoc = 6151;
+	};
+	F047029813263414003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 1140;
+		vrLoc = 11997;
+	};
+	F047029B13263437003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1262;
+		vrLoc = 6151;
+	};
+	F047029C13263437003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 1086;
+		vrLoc = 12065;
+	};
+	F047029F13263464003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A383E01300379F00CE917D /* NSObjCRuntime.h */;
+		name = "NSObjCRuntime.h: 189";
+		rLen = 0;
+		rLoc = 6624;
+		rType = 0;
+		vrLen = 1262;
+		vrLoc = 6151;
+	};
+	F04702A013263464003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */;
+		name = "UdpSocket.cpp: 145";
+		rLen = 27;
+		rLoc = 4426;
+		rType = 0;
+		vrLen = 996;
+		vrLoc = 12162;
+	};
+	F04702A113263483003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 758";
+		rLen = 13;
+		rLoc = 20475;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	F04702A213263483003450E4 /* PlistBookmark */ = {
+		isa = PlistBookmark;
+		fRef = F047026E13262FF2003450E4 /* preferences.plist */;
+		fallbackIsa = PBXBookmark;
+		isK = 0;
+		kPath = (
+		);
+		name = /Users/guillaume/Usine/monolithe/switchboard/Switchboard/preferences.plist;
+		rLen = 0;
+		rLoc = 9223372036854775807;
+	};
+	F04702A313263483003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 263";
+		rLen = 0;
+		rLoc = 7004;
+		rType = 0;
+		vrLen = 1129;
+		vrLoc = 6290;
+	};
+	F04702A413263483003450E4 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
+		name = "Switchboard.cpp: 756";
+		rLen = 0;
+		rLoc = 20394;
+		rType = 0;
+		vrLen = 1248;
+		vrLoc = 19265;
+	};
 	F047FB61131CCFDC003450E4 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
@@ -2476,7 +2796,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 637";
 		rLen = 0;
-		rLoc = 20883;
+		rLoc = 21072;
 		rType = 0;
 		vrLen = 1607;
 		vrLoc = 18496;
@@ -2487,7 +2807,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		fallbackIsa = XCBuildMessageTextBookmark;
 		rLen = 1;
-		rLoc = 380;
+		rLoc = 387;
 		rType = 1;
 	};
 	F047FC02131FB52C003450E4 /* PBXTextBookmark */ = {
@@ -2495,7 +2815,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 303";
 		rLen = 0;
-		rLoc = 10456;
+		rLoc = 10646;
 		rType = 0;
 		vrLen = 992;
 		vrLoc = 6424;
@@ -2556,7 +2876,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		fallbackIsa = XCBuildMessageTextBookmark;
 		rLen = 0;
-		rLoc = 393;
+		rLoc = 400;
 		rType = 1;
 	};
 	F047FC11131FB5EA003450E4 /* PBXTextBookmark */ = {
@@ -2564,7 +2884,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 331";
 		rLen = 0;
-		rLoc = 11576;
+		rLoc = 11766;
 		rType = 0;
 		vrLen = 1489;
 		vrLoc = 8688;
@@ -2574,7 +2894,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 345";
 		rLen = 0;
-		rLoc = 12025;
+		rLoc = 12215;
 		rType = 0;
 		vrLen = 1262;
 		vrLoc = 9356;
@@ -2584,7 +2904,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 303";
 		rLen = 0;
-		rLoc = 10456;
+		rLoc = 10646;
 		rType = 0;
 		vrLen = 990;
 		vrLoc = 6660;
@@ -2620,7 +2940,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 344";
 		rLen = 0;
-		rLoc = 12025;
+		rLoc = 12215;
 		rType = 0;
 		vrLen = 1243;
 		vrLoc = 9248;
@@ -2630,7 +2950,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 342";
 		rLen = 0;
-		rLoc = 11849;
+		rLoc = 12039;
 		rType = 0;
 		vrLen = 1334;
 		vrLoc = 8987;
@@ -2640,7 +2960,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 342";
 		rLen = 0;
-		rLoc = 11847;
+		rLoc = 12037;
 		rType = 0;
 		vrLen = 1306;
 		vrLoc = 9142;
@@ -2650,7 +2970,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 303";
 		rLen = 0;
-		rLoc = 10456;
+		rLoc = 10646;
 		rType = 0;
 		vrLen = 1016;
 		vrLoc = 6427;
@@ -2660,7 +2980,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 348";
 		rLen = 0;
-		rLoc = 12016;
+		rLoc = 12206;
 		rType = 0;
 		vrLen = 1200;
 		vrLoc = 9248;
@@ -2700,7 +3020,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 310";
 		rLen = 0;
-		rLoc = 10456;
+		rLoc = 10646;
 		rType = 0;
 		vrLen = 969;
 		vrLoc = 6741;
@@ -2740,7 +3060,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 708";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 2215;
 		vrLoc = 19813;
@@ -2750,7 +3070,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 709";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 2223;
 		vrLoc = 19830;
@@ -2816,7 +3136,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 706";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 2207;
 		vrLoc = 19830;
@@ -2826,7 +3146,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 714";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 2094;
 		vrLoc = 19850;
@@ -2836,7 +3156,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 711";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 2144;
 		vrLoc = 20253;
@@ -2846,7 +3166,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 711";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 2097;
 		vrLoc = 20345;
@@ -2866,7 +3186,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 702";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 2215;
 		vrLoc = 20227;
@@ -2876,7 +3196,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 732";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 2117;
 		vrLoc = 20373;
@@ -2896,7 +3216,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 712";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 2073;
 		vrLoc = 20375;
@@ -2906,7 +3226,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 730";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 1931;
 		vrLoc = 20671;
@@ -2916,7 +3236,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 735";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 2045;
 		vrLoc = 20671;
@@ -2926,7 +3246,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 730";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 1932;
 		vrLoc = 21037;
@@ -2936,7 +3256,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 730";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 1878;
 		vrLoc = 21091;
@@ -2946,7 +3266,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 743";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 1835;
 		vrLoc = 21065;
@@ -2956,7 +3276,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 738";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 1913;
 		vrLoc = 21124;
@@ -2988,7 +3308,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 744";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 1914;
 		vrLoc = 21178;
@@ -2998,7 +3318,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 746";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 1807;
 		vrLoc = 21320;
@@ -3042,7 +3362,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 742";
 		rLen = 0;
-		rLoc = 20531;
+		rLoc = 20720;
 		rType = 0;
 		vrLen = 1777;
 		vrLoc = 21350;
@@ -3119,7 +3439,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 716";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 1630;
 		vrLoc = 20808;
@@ -3139,7 +3459,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 738";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 2029;
 		vrLoc = 20225;
@@ -3159,7 +3479,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 717";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 1232;
 		vrLoc = 20939;
@@ -3189,7 +3509,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 714";
 		rLen = 0;
-		rLoc = 20488;
+		rLoc = 20677;
 		rType = 0;
 		vrLen = 1289;
 		vrLoc = 21751;
@@ -3199,7 +3519,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 725";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1294;
 		vrLoc = 20203;
@@ -3230,7 +3550,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		fallbackIsa = XCBuildMessageTextBookmark;
 		rLen = 0;
-		rLoc = 740;
+		rLoc = 747;
 		rType = 1;
 	};
 	F047FD681322330D003450E4 /* PBXTextBookmark */ = {
@@ -3238,7 +3558,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 725";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1378;
 		vrLoc = 20267;
@@ -3258,7 +3578,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 725";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 931;
 		vrLoc = 20794;
@@ -3285,7 +3605,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 726";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1032;
 		vrLoc = 20859;
@@ -3322,7 +3642,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 727";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1687;
 		vrLoc = 20641;
@@ -3362,7 +3682,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 726";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1635;
 		vrLoc = 20714;
@@ -3372,7 +3692,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 726";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1581;
 		vrLoc = 20769;
@@ -3392,7 +3712,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 726";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1581;
 		vrLoc = 20769;
@@ -3402,7 +3722,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 726";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1560;
 		vrLoc = 20816;
@@ -3521,7 +3841,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 710";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1585;
 		vrLoc = 20006;
@@ -3551,7 +3871,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 709";
 		rLen = 0;
-		rLoc = 20118;
+		rLoc = 20311;
 		rType = 0;
 		vrLen = 1703;
 		vrLoc = 20512;
@@ -3561,7 +3881,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 711";
 		rLen = 29;
-		rLoc = 19885;
+		rLoc = 20079;
 		rType = 0;
 		vrLen = 1755;
 		vrLoc = 20512;
@@ -3591,7 +3911,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 706";
 		rLen = 0;
-		rLoc = 19776;
+		rLoc = 19970;
 		rType = 0;
 		vrLen = 1649;
 		vrLoc = 20512;
@@ -3601,7 +3921,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 665";
 		rLen = 0;
-		rLoc = 18686;
+		rLoc = 18876;
 		rType = 0;
 		vrLen = 1706;
 		vrLoc = 20277;
@@ -4234,7 +4554,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 554";
 		rLen = 0;
-		rLoc = 16492;
+		rLoc = 16682;
 		rType = 0;
 		vrLen = 1060;
 		vrLoc = 15274;
@@ -4244,7 +4564,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 564";
 		rLen = 6;
-		rLoc = 16442;
+		rLoc = 16632;
 		rType = 0;
 		vrLen = 912;
 		vrLoc = 15430;
@@ -4264,7 +4584,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 567";
 		rLen = 166;
-		rLoc = 16492;
+		rLoc = 16682;
 		rType = 0;
 		vrLen = 952;
 		vrLoc = 15318;
@@ -4816,7 +5136,7 @@
 		fRef = 08FB7796FE84155DC02AAC07 /* Switchboard.cpp */;
 		name = "Switchboard.cpp: 395";
 		rLen = 132;
-		rLoc = 11804;
+		rLoc = 11994;
 		rType = 0;
 		vrLen = 2026;
 		vrLoc = 9453;
@@ -5397,9 +5717,9 @@
 	};
 	F0A1521910F4A4EC00BB373F /* UdpSocket.cpp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {992, 7560}}";
+			sepNavIntBoundsRect = "{{0, 0}, {992, 7546}}";
 			sepNavSelRange = "{4426, 27}";
-			sepNavVisRange = "{11716, 983}";
+			sepNavVisRange = "{12162, 996}";
 		};
 	};
 	F0A1521A10F4A4EC00BB373F /* TimerListener.h */ = {
@@ -6245,8 +6565,8 @@
 		sourceTree = "<absolute>";
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {3232, 11844}}";
-			sepNavSelRange = "{22141, 18}";
-			sepNavVisRange = "{19699, 2971}";
+			sepNavSelRange = "{14203, 112}";
+			sepNavVisRange = "{13153, 2364}";
 		};
 	};
 	F0E316EE1131EAF8000979F7 /* unistd.h */ = {
