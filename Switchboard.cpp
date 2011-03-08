@@ -55,7 +55,7 @@ size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t n
 	
 	//printf("web console call back: %s\n",(char*) ptr);
 	
-		
+	
 	CFXMLTreeRef    cfXMLTree;
 	CFDataRef       xmlData;
 	char			buffer[1024];
@@ -338,7 +338,17 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			}
 			lastLaunchProcessTime = now;
 			
-			int appIndex = rm.getArgAsInt32( 0 );
+			int appIndex = -1;
+			string appName = "";
+			
+			if (rm.getArgType(0)==	OFXOSC_TYPE_INT32){ // app by index
+				appIndex = rm.getArgAsInt32( 0 );
+			}
+			else if (rm.getArgType(0)== OFXOSC_TYPE_STRING){ // app by name
+				appName = rm.getArgAsString( 0 );
+				appIndex = myApplicationLister.getApplicationIndex(CFStringCreateWithCString(kCFAllocatorDefault, appName.c_str(), kCFStringEncodingUTF8));
+				
+			}
 			
 			if (appIndex == activeProcessIndex) break; // don't relaunch current app
 			
@@ -441,7 +451,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			ofxOscMessage sm;
 			
 			sm.setAddress("/monolithe/setprocesslist");
-			int i = myApplicationLister.updateApplicationsList();
+			myApplicationLister.updateApplicationsList();
 			
 			for (int i = 0; i<myApplicationLister.getApplicationCount();i++){
 				
@@ -565,13 +575,13 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				inFile.close();
 				
 				/*inFile.seekg (0, ios::beg);
-				size = inFile.tellg();
-				
-				memblock = new char [size];
-
-				inFile.read (memblock, size);
-				inFile.close();
-				*/
+				 size = inFile.tellg();
+				 
+				 memblock = new char [size];
+				 
+				 inFile.read (memblock, size);
+				 inFile.close();
+				 */
 				
 				cout << "the complete file content is in memory : " << length << "bytes\n";
 				
@@ -707,6 +717,7 @@ void InstallExceptionHandler()
 void readPreferences()
 {
 	
+	OSStatus err;
 	// build url to xml pref file
     CFBundleRef mainBundle = CFBundleGetMainBundle();
 	CFURLRef	mainBundleURL = CFBundleCopyBundleURL(mainBundle);
@@ -720,40 +731,49 @@ void readPreferences()
 	SInt32				errorCode;
 	
 	// Read the XML file.
-	CFURLCreateDataAndPropertiesFromResource(
-											 kCFAllocatorDefault,
-											 preferenceFileURL,
-											 &resourceData,            // place to put file data
-											 NULL,
-											 NULL,
-											 &errorCode);
+	err = CFURLCreateDataAndPropertiesFromResource(
+												   kCFAllocatorDefault,
+												   preferenceFileURL,
+												   &resourceData,            // place to put file data
+												   NULL,
+												   NULL,
+												   &errorCode);
+	
+	if (!noErr==err) return;
 	
 	// Reconstitute the dictionary using the XML data.
-	propertyList = CFPropertyListCreateFromXMLData( kCFAllocatorDefault,
-												   resourceData,
-												   kCFPropertyListImmutable,
-												   &errorString);
-	
-	CFRelease( resourceData );
-	CFShow(errorString);
-	
-	if (CFGetTypeID(propertyList)==CFDictionaryGetTypeID()){
+	if (errorCode==0){
+		propertyList = CFPropertyListCreateFromXMLData( kCFAllocatorDefault,
+													   resourceData,
+													   kCFPropertyListImmutable,
+													   &errorString);
 		
-		// set values from plist file if exist
-		CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Location"), (const void **)&location);
-		CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Web Console URL"), (const void **)&webConsoleUrl);
+		CFRelease( resourceData );
 		
-		CFShow(location);
-		CFShow(webConsoleUrl);
-
+		if (CFGetTypeID(propertyList)==CFDictionaryGetTypeID()){
+			
+			// set values from plist file if exist
+			CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Location"), (const void **)&location);
+			CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Web Console URL"), (const void **)&webConsoleUrl);
+			
+		
+			
+		}
+	}else {
+		
+		printf("preferences read error %i\n", errorCode);
 	}
+	
+	CFShow(location);
+	CFShow(webConsoleUrl);
+
 }
 
 #pragma mark main
 int main (int argc, const char * argv[]) {
 	// Set up a signal handler so we can clean up when we're interrupted from the command line
 	InstallExceptionHandler();
-
+	
 	// preferences
 	readPreferences();
 	
@@ -775,6 +795,7 @@ int main (int argc, const char * argv[]) {
 	
 	// unload running switchboard launchd process
 	myLaunchdWrapper.removeProcess(PROCESS_LABEL);
+	
 	
 	// start the loop
 	CFRunLoopRun();

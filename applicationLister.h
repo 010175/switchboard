@@ -49,6 +49,8 @@ public:
 	
 	CFStringRef getApplicationPath(int _index);
 	
+	int getApplicationIndex(CFStringRef _searchName);
+
 	CFStringRef getApplicationEnclosingDirectoryPath(int _index);
 			
 	int getApplicationCount();
