@@ -17,6 +17,7 @@
 		F010D76710E907FC00342293 /* applicationLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F010D76610E907FC00342293 /* applicationLister.cpp */; };
 		F010DC2E10ECDEE800342293 /* libcurses.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F010DC2D10ECDEE800342293 /* libcurses.dylib */; };
 		F024F66A10E7FAA300828192 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F024F66910E7FAA300828192 /* Security.framework */; };
+		F04701B213260A45003450E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F04701B113260A45003450E4 /* Foundation.framework */; };
 		F095A00F115A24CE0094892D /* screen_fader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F095A00E115A24CE0094892D /* screen_fader.cpp */; };
 		F0A1521F10F4A4EC00BB373F /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0A1521310F4A4EC00BB373F /* IpEndpointName.cpp */; };
 		F0A1522010F4A4EC00BB373F /* NetworkingUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0A1521810F4A4EC00BB373F /* NetworkingUtils.cpp */; };
@@ -67,6 +68,7 @@
 		F024F66910E7FAA300828192 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		F02967E71135C9D800C5582F /* code mess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "code mess"; sourceTree = "<group>"; };
 		F038BBA0116DE7D3008F3116 /* Switchboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Switchboard.h; sourceTree = "<group>"; };
+		F04701B113260A45003450E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F095A00D115A24CE0094892D /* screen_fader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = screen_fader.h; sourceTree = "<group>"; };
 		F095A00E115A24CE0094892D /* screen_fader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = screen_fader.cpp; sourceTree = "<group>"; };
 		F0A1521310F4A4EC00BB373F /* IpEndpointName.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IpEndpointName.cpp; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				F0E313041130428B000979F7 /* CoreServices.framework in Frameworks */,
 				F0E313CC11304458000979F7 /* ApplicationServices.framework in Frameworks */,
 				F0BE070411788F1400F8E613 /* libcurl.dylib in Frameworks */,
+				F04701B213260A45003450E4 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +176,7 @@
 				F0E312EC11304260000979F7 /* CoreVideo.framework */,
 				F024F66910E7FAA300828192 /* Security.framework */,
 				09AB6884FE841BABC02AAC07 /* CoreFoundation.framework */,
+				F04701B113260A45003450E4 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
