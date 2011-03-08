@@ -69,6 +69,7 @@
 		F02967E71135C9D800C5582F /* code mess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "code mess"; sourceTree = "<group>"; };
 		F038BBA0116DE7D3008F3116 /* Switchboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Switchboard.h; sourceTree = "<group>"; };
 		F04701B113260A45003450E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F047026E13262FF2003450E4 /* preferences.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = preferences.plist; sourceTree = "<group>"; };
 		F095A00D115A24CE0094892D /* screen_fader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = screen_fader.h; sourceTree = "<group>"; };
 		F095A00E115A24CE0094892D /* screen_fader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = screen_fader.cpp; sourceTree = "<group>"; };
 		F0A1521310F4A4EC00BB373F /* IpEndpointName.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IpEndpointName.cpp; sourceTree = "<group>"; };
@@ -140,6 +141,7 @@
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				19C28FBDFE9D53C911CA2CBB /* Products */,
 				F0A383231300030F00CE917D /* todo */,
+				F047026E13262FF2003450E4 /* preferences.plist */,
 			);
 			name = Switchboard;
 			sourceTree = "<group>";

@@ -92,6 +92,8 @@ size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t n
 	int             childCount;
 	int             index;
 	
+	if (NULL==cfXMLTree) return 0;
+	
 	// Get a count of the top level node’s children.
 	childCount = CFTreeGetChildCount(cfXMLTree);
 	
