@@ -36,16 +36,22 @@ double lastLaunchProcessTime = 0;
 applicationLister myApplicationLister;
 launchdWrapper myLaunchdWrapper;
 
+
+
 // 
 CFStringRef location = CFSTR(DEFAULT_LOCATION);
 CFStringRef webConsoleURL = CFSTR(DEFAULT_WEB_CONSOLE_URL);
+CFStringRef activeProcessName = NULL;
+CFStringRef duplexProcessName = NULL;
 
 // osc
 ofxOscSender	sender;
 ofxOscReceiver	receiver;
+string remoteIP = "";
 
 ofxNetworkUtils networkUtils;
 
+// xml
 TiXmlDocument calendar_xml("calendar.xml");
 TiXmlDocument uploads_xml("uploads.xml");
 TiXmlDocument duplex_xml;
@@ -56,70 +62,50 @@ double getSystemTime(){
 	timeval Time = {0, 0};
 	gettimeofday(&Time, NULL);
 	
-	return Time.tv_sec + Time.tv_usec / 1000000.0;	
-	
+	return Time.tv_sec + Time.tv_usec / 1000000.0;
 }
 
 #pragma mark curl Send Process List call back
 size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t nmemb, void *stream){
 	
-	//printf("web console call back: %s\n",(char*) ptr);
-	
-	
-	CFXMLTreeRef    cfXMLTree;
-	CFDataRef       xmlData;
-	char			buffer[1024];
-	CFIndex			bufferLenght;
-	
-	bufferLenght = sprintf(buffer, "%s",(char*) ptr);
-	
-	printf("%s", buffer);
-	
-	xmlData = CFDataCreate(kCFAllocatorDefault, (const UInt8 *)buffer, bufferLenght);
-	
-	
-	// Parse the XML and get the CFXMLTree.
-	cfXMLTree = CFXMLTreeCreateFromData(kCFAllocatorDefault,
-										xmlData,
-										NULL,
-										kCFXMLParserSkipWhitespace,
-										kCFXMLNodeCurrentVersion);
-	
-	
-	
-	CFXMLTreeRef    xmlTreeNode;
-	CFXMLNodeRef    xmlNode;
-	int             childCount;
-	int             index;
-	
-	if (NULL==cfXMLTree) return 0;
-	
-	// Get a count of the top level node’s children.
-	childCount = CFTreeGetChildCount(cfXMLTree);
-	
-	// Print the data string for each top-level node.
-	for (index = 0; index < childCount; index++) {
-		
-		CFXMLTreeRef    xmlTreeSubNode;
-		CFXMLNodeRef    xmlSubNode;
-		int             subChildCount;
-		int             subIndex;
-		
-		xmlTreeNode = CFTreeGetChildAtIndex(cfXMLTree, index);
-		xmlNode = CFXMLTreeGetNode(xmlTreeNode);
-		
-		CFShow(CFXMLNodeGetString(xmlNode));
-		
-		subChildCount = CFTreeGetChildCount(xmlTreeNode);
-		for (subIndex = 0; subIndex < subChildCount; subIndex++) {
-			
-			xmlTreeSubNode =  CFTreeGetChildAtIndex(xmlTreeNode, subIndex);
-			xmlSubNode = CFXMLTreeGetNode(xmlTreeSubNode);
-			//CFXMLNodeRef pp = 
-			CFShow(CFXMLNodeGetString(xmlSubNode));
-		}
-		
+    duplex_xml.Parse((const char*)ptr);
+    
+	if ( duplex_xml.Error() )
+	{
+		printf("xml error %s: %i\n", duplex_xml.Value(), duplex_xml.ErrorId() );
+		return nmemb;
 	}
+	
+	int count = 0;
+	
+	TiXmlNode* node = 0;
+	TiXmlElement* element = 0;
+    
+    duplexProcessName = NULL;
+    
+	while ( (node = duplex_xml.FirstChildElement()->IterateChildren( node ) ) != 0 ) {
+		
+		element = node->ToElement();
+		
+       // printf("%s, %s,%s, %s\n", element->Attribute("name"), element->Attribute("location"),element->Attribute("active"), element->Attribute("duplex"));
+		
+        if (atoi(element->Attribute("duplex"))==1){
+            
+            
+            // Check if other location process is duplex
+            CFStringRef locationAsCFString = CFStringCreateWithCString(kCFAllocatorDefault,element->Attribute("location"),CFStringGetSystemEncoding());
+            
+            if (CFStringCompare(location,locationAsCFString , kCFCompareCaseInsensitive)!=kCFCompareEqualTo){
+                printf("duplex %s from %s: \n", element->Attribute("name"),element->Attribute("location"));
+                duplexProcessName =  CFStringCreateWithCString(kCFAllocatorDefault,element->Attribute("name"),CFStringGetSystemEncoding());
+            }
+        }
+		
+		++count;
+	}
+	
+	;
+	duplex_xml.Clear();
 	
 	return nmemb;
 }
@@ -195,8 +181,6 @@ void sendProcessListToWebConsole(){
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
 	
-	//printf("%.2i:%.2i:%.2i Send Process List to Web Console\n", timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec);
-	
 	// setup curl
 	CURLcode ret;
 	CURL *hnd = curl_easy_init();
@@ -222,7 +206,6 @@ void sendProcessListToWebConsole(){
 		curl_formadd(&post, &last,
 					 CURLFORM_COPYNAME, "process_list[]",
 					 CURLFORM_COPYCONTENTS, bytes,
-					 // CURLFORM_COPYCONTENTS, randomch,
 					 CURLFORM_END);
 		
 	}
@@ -234,19 +217,46 @@ void sendProcessListToWebConsole(){
 	char duplexch[4];
 	sprintf(duplexch, "%i",activeProcessIsDuplex);
 	
+	
+    
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "process_active_index",
 				 CURLFORM_COPYCONTENTS, idch, CURLFORM_END);
 	
 	
+	// send active process name
+	char *activeProcessNameAsBytes;
+    
+    if (NULL!=activeProcessName){
+        CFIndex activeProcessNAmeLength = CFStringGetLength(activeProcessName);
+        activeProcessNameAsBytes = (char *)malloc( activeProcessNAmeLength + 1 );
+        activeProcessNameAsBytes = (char*)CFStringGetCStringPtr(activeProcessName, encodingMethod);
+        
+        curl_formadd(&post, &last,
+                     CURLFORM_COPYNAME, "process_active_name",
+                     CURLFORM_COPYCONTENTS, activeProcessNameAsBytes, CURLFORM_END);
+        
+    } else {
+       	curl_formadd(&post, &last,
+                     CURLFORM_COPYNAME, "process_active_name",
+                     CURLFORM_COPYCONTENTS, "", CURLFORM_END);
+        
+    }
+    
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "process_active_is_duplex",
 				 CURLFORM_COPYCONTENTS, duplexch, CURLFORM_END);
 	
 	
+	char *locationAsBytes;
+	CFIndex locationLength = CFStringGetLength(location);
+	locationAsBytes = (char *)malloc( locationLength + 1 );
+	locationAsBytes = (char*)CFStringGetCStringPtr(location, encodingMethod);
+	
+	
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "location",
-				 CURLFORM_COPYCONTENTS, DEFAULT_LOCATION, CURLFORM_END);
+				 CURLFORM_COPYCONTENTS, locationAsBytes, CURLFORM_END);
 	
 	
 	curl_formadd(&post, &last,
@@ -257,17 +267,19 @@ void sendProcessListToWebConsole(){
 	/* Set the form info */
 	
 	// CFString to c_string
-	char  webConsoleString[PATH_MAX]; // buffer
-
-	CFStringGetCString(webConsoleURL, webConsoleString, PATH_MAX, kCFStringEncodingASCII);
-	printf("%s\n",webConsoleString);
+	char *webConsoleURLAsBytes;
+	CFIndex webConsoleURLLength = CFStringGetLength(webConsoleURL);
+	webConsoleURLAsBytes = (char *)malloc( webConsoleURLLength + 1 );
+	webConsoleURLAsBytes = (char*)CFStringGetCStringPtr(webConsoleURL, encodingMethod);
 	
 	curl_easy_setopt(hnd, CURLOPT_HTTPPOST, post);
-	curl_easy_setopt(hnd, CURLOPT_URL, webConsoleString);
+	curl_easy_setopt(hnd, CURLOPT_URL, webConsoleURLAsBytes);
 	
 	ret = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
 	
+	//NSLog(location);
+	//printf("%s, %s", locationAsBytes, webConsoleURLAsBytes);
 }
 
 
@@ -309,6 +321,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 	while( receiver.hasWaitingMessages() )
 	{
 		
+        
 		time_t rawtime;
 		struct tm * timeinfo;
 		
@@ -318,30 +331,35 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		ofxOscMessage rm;
 		receiver.getNextMessage( &rm );
 		
+        if (rm.getRemoteIp()!=remoteIP){
+            printf("setting up remote ip\n");
+            remoteIP = rm.getRemoteIp();
+            sender.setup(remoteIP, _SENDER_PORT);// reset sender remote ip
+        }
+        
 		printf("%.2i:%.2i:%.2i @%s : %s\n", timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec,rm.getRemoteIp().c_str(), rm.getAddress().c_str());
 		
-		//CFStringRef remoteIP = CFStringCreateWithCString(kCFAllocatorDefault,rm.getRemoteIp().c_str(),kCFStringEncodingASCII);
-		//CFNumberRef timecf = CFNumberCreate(kCFAllocatorDefault, kCFNumberNSIntegerType, &rawtime);
-		//CFDictionaryAddValue(clientListDictionnary, remoteIP, timecf);
-		
-		//CFShow(timecf);
-		//CFShow(remoteIP);
-		
-		//CFShow(clientListDictionnary);
-		
-		// ping
-#pragma mark osc ping
+		#pragma mark osc ping
 		if ( rm.getAddress() == "/monolithe/ping" )
 		{
-			sender.setup(rm.getRemoteIp(), _SENDER_PORT);// reset sender remote ip
-			
 			ofxOscMessage sm;
 			
 			sm.setAddress("/monolithe/pong"); // pong back to remote
 			sm.addStringArg(networkUtils.getInterfaceAddress(0));
-			
 			sender.sendMessage(sm);
 			
+            // send duplex message if needed
+            if (duplexProcessName!=NULL){
+                sm.setAddress("/monolithe/callme"); // pong back to remote
+                
+                char *bytes;
+                CFIndex length = CFStringGetLength(duplexProcessName);
+                bytes = (char *)malloc( length + 1 );
+                bytes = (char*)CFStringGetCStringPtr(duplexProcessName,CFStringGetSystemEncoding());
+                
+                sm.addStringArg(string(bytes));
+                sender.sendMessage(sm);
+            }
 			break;
 		}
 		
@@ -395,7 +413,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			}
 			myLaunchdWrapper.submitProcess(PROCESS_LABEL, filePath);
 			activeProcessIndex = appIndex;
-			
+			activeProcessName = myApplicationLister.getApplicationName(appIndex);
 			
 			// get duplex status
 			CFMutableStringRef appDuplexFilePath= CFStringCreateMutable(NULL, 0);
@@ -465,8 +483,6 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 #pragma mark osc process list
 		if ( rm.getAddress() == "/monolithe/getprocesslist" )	
 		{
-			sender.setup(rm.getRemoteIp(), _SENDER_PORT);
-			
 			ofxOscMessage sm;
 			
 			sm.setAddress("/monolithe/setprocesslist");
@@ -507,8 +523,6 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 #pragma mark osc process index
 		if ( rm.getAddress() == "/monolithe/getprocessindex" ) 
 		{
-			sender.setup(rm.getRemoteIp(), _SENDER_PORT);// reset sender remote ip
-			
 			ofxOscMessage sm;
 			sm.setAddress("/monolithe/setprocessindex");
 			sm.addIntArg(activeProcessIndex);	
@@ -525,7 +539,6 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		{
 			// get osc argument
 			int appIndex = rm.getArgAsInt32( 0 );
-			sender.setup(rm.getRemoteIp(), _SENDER_PORT);// reset sender remote ip
 			
 			ofxOscMessage sm;
 			sm.setAddress("/monolithe/setprocessdescription");
@@ -593,15 +606,6 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				
 				inFile.close();
 				
-				/*inFile.seekg (0, ios::beg);
-				 size = inFile.tellg();
-				 
-				 memblock = new char [size];
-				 
-				 inFile.read (memblock, size);
-				 inFile.close();
-				 */
-				
 				cout << "the complete file content is in memory : " << length << "bytes\n";
 				
 				sm.addStringArg(buffer);
@@ -620,12 +624,11 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 #pragma mark osc stop process
 		if ( rm.getAddress() == "/monolithe/stopprocess" ) 
 		{
-			sender.setup(rm.getRemoteIp(), _SENDER_PORT); // reset sender remote ip
-			
 			myLaunchdWrapper.removeProcess(PROCESS_LABEL); // unload current process
 			
 			activeProcessIndex = -1;
-			
+			activeProcessName = NULL;
+            
 			sendProcessListToWebConsoleThread.start();
 			
 			break;
@@ -683,7 +686,7 @@ void SignalHandler(int signal)
 
 void InstallExceptionHandler()
 {	
-
+    
 	signal(SIGABRT, SignalHandler);
 	signal(SIGILL, SignalHandler);
 	signal(SIGSEGV, SignalHandler);
@@ -756,7 +759,7 @@ void readPreferences()
 	
 	NSLog(CFSTR("location : %@"), location);
 	NSLog(CFSTR("Web Console URL : %@"), webConsoleURL);
-
+    
 }
 
 #pragma mark main
@@ -772,7 +775,7 @@ int main (int argc, const char * argv[]) {
 	mRunLoopRef = CFRunLoopGetCurrent();
 	
 	CFRunLoopTimerRef oscTimer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + 1, 1, 0, 0, oscMessagesTimerFunction, NULL); // 1 sec
-	CFRunLoopTimerRef webConsoleTimer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + 4, 4, 0, 0, webConsoleTimerFunction, NULL); // 4 sec
+	CFRunLoopTimerRef webConsoleTimer = CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + 5, 5, 0, 0, webConsoleTimerFunction, NULL); // 5 sec
 	
 	CFRunLoopAddTimer(mRunLoopRef, oscTimer, kCFRunLoopDefaultMode);
 	CFRunLoopAddTimer(mRunLoopRef, webConsoleTimer, kCFRunLoopDefaultMode);

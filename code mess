@@ -159,5 +159,86 @@ ProcessSerialNumber psn = { 0, kCurrentProcess };
 	printf("err is %i\r", er);
 
 
+////////
+
+OSStatus err = noErr;
+CFXMLTreeRef    cfXMLTree;
+CFDataRef       xmlData;
+
+printf("\n\n%s\n\n",(const char *)ptr);
+xmlData = CFDataCreate(kCFAllocatorDefault, (const UInt8 *)ptr, size);
+err = (xmlData==NULL);
+
+CFShow(xmlData);
+// Parse the XML and get the CFXMLTree.
+if (noErr == err){
+cfXMLTree = CFXMLTreeCreateFromData(kCFAllocatorDefault,
+xmlData,
+NULL,
+kCFXMLParserSkipWhitespace,
+kCFXMLNodeCurrentVersion);
+
+err = (cfXMLTree==NULL);
+} else  {
+NSLog(CFSTR("xml create error %i"),err);
+return 0;
+}
+
+if (noErr == err){
+CFXMLTreeRef    xmlTreeNode;
+CFXMLNodeRef    xmlNode;
+int             childCount;
+int             index;
+
+// Get a count of the top level node’s children.
+childCount = CFTreeGetChildCount(cfXMLTree);
+
+// Print the data string for each top-level node.
+for (index = 0; index < childCount; index++) {
+
+CFXMLTreeRef    xmlTreeSubNode;
+CFXMLNodeRef    xmlSubNode;
+int             subChildCount;
+int             subIndex;
+
+xmlTreeNode = CFTreeGetChildAtIndex(cfXMLTree, index);
+xmlNode = CFXMLTreeGetNode(xmlTreeNode);
+
+CFShow(CFXMLNodeGetString(xmlNode));
+
+subChildCount = CFTreeGetChildCount(xmlTreeNode);
+for (subIndex = 0; subIndex < subChildCount; subIndex++) {
+xmlTreeSubNode =  CFTreeGetChildAtIndex(xmlTreeNode, subIndex);
+xmlSubNode = CFXMLTreeGetNode(xmlTreeSubNode);
+
+CFShow(CFXMLNodeGetString(xmlSubNode));
+
+CFXMLElementInfo *elementInfo;
+elementInfo =  (CFXMLElementInfo*)CFXMLNodeGetInfoPtr(xmlSubNode);
+
+CFDictionaryRef attributes = (CFDictionaryRef)elementInfo->attributes;
+CFShow(attributes);
+/*
+CFStringRef value;
+value =(CFStringRef) CFDictionaryGetValue(attributes, CFSTR("xmlAttribute"));
+if(value != NULL) 
+{ 
+NSLog(value);
+//value = NULL; 
+} */
+
+//CFXMLNodeRef xmlSubSubNode =  CFXMLTreeGetNode(xmlSubNode);
+//CFStringRef info  = (CFStringRef)CFXMLNodeGetInfoPtr(xmlSubNode);
+//CFShow(info);
+//here	
+}
+
+}
+}else  {
+NSLog(CFSTR("xml parse error %i"),err);
+return 0;
+}
+
+return nmemb;
 
 
