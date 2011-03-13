@@ -160,6 +160,7 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 				
 				doFadeOperation(CleanScreen, 0.2f, true); // fade out
 				sendProcessListToWebConsole();
+               
 			}
 		}
 		++count;
@@ -411,6 +412,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				doFadeOperation(CleanScreen, 2.0f, true); // fade out
 				return;
 			}
+                    
 			myLaunchdWrapper.submitProcess(PROCESS_LABEL, filePath);
 			activeProcessIndex = appIndex;
 			activeProcessName = myApplicationLister.getApplicationName(appIndex);
@@ -528,8 +530,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			sm.addIntArg(activeProcessIndex);	
 			
 			sender.sendMessage(sm);
-			
-			
+                
 			break;
 			
 		}
@@ -619,7 +620,96 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 		}					
 		
-		
+        
+#pragma mark osc process description
+		if ( rm.getAddress() == "/monolithe/getallprocessdescription" )	
+		{
+
+          	ofxOscBundle sb;
+			for (int i = 0; i<myApplicationLister.getApplicationCount();i++){
+                
+                ofxOscMessage sm;
+                
+                sm.setAddress("/monolithe/setprocessdescription");
+                
+                
+                CFIndex          pathLength;
+                Boolean          success;
+                
+                CFStringRef appPath = myApplicationLister.getApplicationEnclosingDirectoryPath(i);
+                CFMutableStringRef appXmlDescriptionFilePath= CFStringCreateMutable(NULL, 0);
+                
+                if (appPath == NULL) // double check if app name is not null.
+                    appPath = CFSTR("Path error");
+                
+                // build path to xml description file (path/application_name.xml)
+                CFStringAppend(appXmlDescriptionFilePath, appPath);
+                CFStringAppend(appXmlDescriptionFilePath,CFSTR("/"));
+                CFStringAppend(appXmlDescriptionFilePath, myApplicationLister.getApplicationName(i));
+                CFStringAppend(appXmlDescriptionFilePath, CFSTR(".xml"));
+                
+                // lenght of path
+                pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appXmlDescriptionFilePath), kCFStringEncodingASCII);
+                
+                // open xml file and send it
+                char             filePath[FILENAME_MAX]; // buffer[pathLength+1];
+                assert(filePath != NULL);
+                
+                // CFString to c_string
+                success = CFStringGetCString(appXmlDescriptionFilePath, filePath, FILENAME_MAX, kCFStringEncodingASCII);
+                
+                CFRelease(appXmlDescriptionFilePath);
+                
+                if (success){ 
+                    
+                    //make sure the file exists on the disk
+                    printf("loading %s...\n",filePath);
+                    ifstream existanceChecker(filePath);
+                    
+                    if(!existanceChecker.is_open()){
+                        printf("file %s not found\n",filePath);
+                        return;
+                    } else {
+                        printf("data file %s ok\n",filePath);
+                    }
+                    
+                    existanceChecker.close();
+                    
+                    ifstream::pos_type length;
+                    char * buffer;
+                    
+                    std::ifstream inFile(filePath,ios::in|ios::binary|ios::ate);
+                    if (!inFile.is_open())
+                        return;
+                    
+                    // get length of file:
+                    inFile.seekg (0, ios::end);
+                    length = inFile.tellg();
+                    inFile.seekg (0, ios::beg);
+                    
+                    // allocate memory:
+                    buffer = new char [length];
+                    
+                    // read data as a block:
+                    inFile.read (buffer,length);
+                    
+                    inFile.close();
+                    
+                    cout << "the complete file content is in memory : " << length << "bytes\n";
+                    
+                    sm.addStringArg(buffer);
+                    
+                    delete[] buffer;
+                    
+                    sb.addMessage(sm);
+                    break;
+                    
+                }else printf("error getting application description\r");
+			}
+            
+            sender.sendBundle(sb);
+            
+        }
 		// stop current process
 #pragma mark osc stop process
 		if ( rm.getAddress() == "/monolithe/stopprocess" ) 
