@@ -56,7 +56,7 @@ TiXmlDocument calendar_xml("calendar.xml");
 TiXmlDocument uploads_xml("uploads.xml");
 TiXmlDocument duplex_xml;
 
-#pragma mark get systeme time 
+# pragma mark get systeme time 
 double getSystemTime(){
 	
 	timeval Time = {0, 0};
@@ -65,7 +65,7 @@ double getSystemTime(){
 	return Time.tv_sec + Time.tv_usec / 1000000.0;
 }
 
-#pragma mark curl Send Process List call back
+# pragma mark curl Send Process List call back
 size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t nmemb, void *stream){
 	
     duplex_xml.Parse((const char*)ptr);
@@ -110,7 +110,7 @@ size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t n
 	return nmemb;
 }
 
-#pragma mark curl get calendar call back
+# pragma mark curl get calendar call back
 size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stream){
 	
 	calendar_xml.Parse((const char*)ptr);
@@ -172,7 +172,7 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 	return nmemb;
 }
 
-#pragma mark web console commnication
+# pragma mark web console commnication
 void sendProcessListToWebConsole(){
 	
 	// log time info
@@ -314,15 +314,13 @@ void getCalendarFromWebConsole(){
 	ret = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
 }
-
-#pragma mark process waiting osc messages
+# pragma mark process waiting osc messages
 void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 {
 	//printf("osc timer function");
 	while( receiver.hasWaitingMessages() )
 	{
-		
-        
+		        
 		time_t rawtime;
 		struct tm * timeinfo;
 		
@@ -340,7 +338,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
         
 		printf("%.2i:%.2i:%.2i @%s : %s\n", timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec,rm.getRemoteIp().c_str(), rm.getAddress().c_str());
 		
-		#pragma mark osc ping
+# pragma mark osc ping
 		if ( rm.getAddress() == "/monolithe/ping" )
 		{
 			ofxOscMessage sm;
@@ -366,7 +364,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		
 		
 		// launch
-#pragma mark osc launch
+# pragma mark osc launch
 		if ( rm.getAddress() == "/monolithe/launchprocess" )
 		{
 			double now = getSystemTime();
@@ -392,7 +390,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 			// hide mouse cursor
 			CGDisplayHideCursor (kCGDirectMainDisplay);
-			CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointZero);
+			CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(1279, 799));
 			doFadeOperation(FillScreen, 0.2f, true); // fade in
 			
 			//remove current process
@@ -482,7 +480,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		}
 		
 		// send process list
-#pragma mark osc process list
+# pragma mark osc process list
 		if ( rm.getAddress() == "/monolithe/getprocesslist" )	
 		{
 			ofxOscMessage sm;
@@ -522,7 +520,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		}
 		
 		// send current process index
-#pragma mark osc process index
+# pragma mark osc process index
 		if ( rm.getAddress() == "/monolithe/getprocessindex" ) 
 		{
 			ofxOscMessage sm;
@@ -535,7 +533,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 		}
 		
-#pragma mark osc process description
+# pragma mark osc process description
 		if ( rm.getAddress() == "/monolithe/getprocessdescription" )	
 		{
 			// get osc argument
@@ -621,17 +619,20 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 		}					
 		
         
-#pragma mark osc process description
-		if ( rm.getAddress() == "/monolithe/getallprocessdescription" )	
+# pragma mark osc process description
+		if ( rm.getAddress() == "/monolithe/getallprocessdescriptions" )	
 		{
 
-          	ofxOscBundle sb;
+          	//ofxOscBundle sb;
+            
+            printf("get all %i process\n",myApplicationLister.getApplicationCount());
+            
 			for (int i = 0; i<myApplicationLister.getApplicationCount();i++){
                 
+                printf("process %i\n",i);
+                
                 ofxOscMessage sm;
-                
                 sm.setAddress("/monolithe/setprocessdescription");
-                
                 
                 CFIndex          pathLength;
                 Boolean          success;
@@ -668,7 +669,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                     
                     if(!existanceChecker.is_open()){
                         printf("file %s not found\n",filePath);
-                        return;
+                         continue;
                     } else {
                         printf("data file %s ok\n",filePath);
                     }
@@ -680,7 +681,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                     
                     std::ifstream inFile(filePath,ios::in|ios::binary|ios::ate);
                     if (!inFile.is_open())
-                        return;
+                         continue;
                     
                     // get length of file:
                     inFile.seekg (0, ios::end);
@@ -701,17 +702,17 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                     
                     delete[] buffer;
                     
-                    sb.addMessage(sm);
-                    break;
+                    sender.sendMessage(sm);
+                   
                     
                 }else printf("error getting application description\r");
 			}
-            
-            sender.sendBundle(sb);
-            
+            printf("sending process description bundle\n");
+           // sender.sendBundle(sb);
+            break;
         }
 		// stop current process
-#pragma mark osc stop process
+# pragma mark osc stop process
 		if ( rm.getAddress() == "/monolithe/stopprocess" ) 
 		{
 			myLaunchdWrapper.removeProcess(PROCESS_LABEL); // unload current process
@@ -796,7 +797,7 @@ void InstallExceptionHandler()
 	
 }
 
-#pragma mark preferences
+# pragma mark preferences
 void readPreferences()
 {
 	
@@ -852,7 +853,7 @@ void readPreferences()
     
 }
 
-#pragma mark main
+# pragma mark main
 int main (int argc, const char * argv[]) {
 	// Set up a signal handler so we can clean up when we're interrupted from the command line
 	InstallExceptionHandler();
