@@ -7,6 +7,18 @@
 #include "applicationLister.h"
 #include <dirent.h>
 
+// for NSLog
+#if __cplusplus
+extern "C" {
+#endif
+    
+	void NSLog(CFStringRef format, ...);
+	void NSLogv(CFStringRef format, va_list args);
+    
+#if __cplusplus
+}
+#endif
+
 //----------------------------------------------------------
 applicationLister::applicationLister(){
 	applicationBundleArray = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
@@ -109,12 +121,20 @@ OSStatus applicationLister::findExecutable(CFURLRef enclosingDirectoryURL){
 	if (enclosingDirectoryURL == NULL) { err = true; }
 	
 	if (err==noErr){
-		tmpApplicationBundleArray = CFBundleCreateBundlesFromDirectory(kCFAllocatorDefault,enclosingDirectoryURL, CFSTR("app"));
+		tmpApplicationBundleArray = CFBundleCreateBundlesFromDirectory(
+                                                                       kCFAllocatorDefault,
+                                                                       enclosingDirectoryURL, 
+                                                                       CFSTR("app")
+                                                                       );
 		if (tmpApplicationBundleArray==NULL){ err = true; }
 	}
 	
 	if (err==noErr){
-		CFArrayAppendArray(applicationBundleArray,tmpApplicationBundleArray, CFRangeMake(0, CFArrayGetCount(tmpApplicationBundleArray)));
+		CFArrayAppendArray(
+                           applicationBundleArray,
+                           tmpApplicationBundleArray,
+                           CFRangeMake(0, CFArrayGetCount(tmpApplicationBundleArray))
+                           );
 	}
 	
 	return err;
@@ -146,7 +166,12 @@ OSStatus applicationLister::updateApplicationsList(){
 	}
 	
 	if (err == noErr){ 
-		applicationsDirectoryURL = CFURLCreateCopyAppendingPathComponent(kCFAllocatorDefault, parentURL, CFSTR("Applications"), true);
+		applicationsDirectoryURL = CFURLCreateCopyAppendingPathComponent(
+                                                                         kCFAllocatorDefault,
+                                                                         parentURL,
+                                                                         CFSTR("Applications"),
+                                                                         true
+                                                                         );
 		if (applicationsDirectoryURL == NULL) { err = true; }
 	}
 	
@@ -161,12 +186,12 @@ OSStatus applicationLister::updateApplicationsList(){
 	// check if directory exist
 	if (err == noErr){
 		err = stat(pathBuffer,&stateResult);
-	} else printf("error\n");
+	} else NSLog(CFSTR("ApplicationLister : Error getting file system representation !"));
 	
 	// find first level applications
 	if (err == noErr){
 		err = findExecutable(applicationsDirectoryURL);
-	} else printf("error\n");
+	} else NSLog(CFSTR("ApplicationLister : Applications directory does not exist !"));
 	
 	
 	
@@ -183,10 +208,18 @@ OSStatus applicationLister::updateApplicationsList(){
 				
 				if (stat(fullPath.c_str(), &stateResult) != -1){
 					if ((stateResult.st_mode & S_IFDIR ) != 0) { // is entry a directory ?
-						
-						//printf("%s is a folder\n",entry->d_name);
-						CFStringRef subDirName = CFStringCreateWithCString( kCFAllocatorDefault, entry->d_name, kCFStringEncodingUTF8 );
-						CFURLRef subDirURL =CFURLCreateCopyAppendingPathComponent(kCFAllocatorDefault, applicationsDirectoryURL, subDirName, true);
+                        CFStringRef subDirName = CFStringCreateWithCString( 
+                                                                           kCFAllocatorDefault, 
+                                                                           entry->d_name, 
+                                                                           kCFStringEncodingUTF8 
+                                                                           );
+                        
+						CFURLRef subDirURL =CFURLCreateCopyAppendingPathComponent(
+                                                                                  kCFAllocatorDefault,
+                                                                                  applicationsDirectoryURL,
+                                                                                  subDirName,
+                                                                                  true
+                                                                                  );
 						CFRelease(subDirName);
 						findExecutable(subDirURL);
 					}
@@ -201,9 +234,8 @@ OSStatus applicationLister::updateApplicationsList(){
 			closedir( dir );
 			dir = NULL;
 		}
-	}
+	}else NSLog(CFSTR("ApplicationLister : Couldn't find executables !"));
 	
-	CFShow(applicationBundleArray);
 	
 	return err;
 }

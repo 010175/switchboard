@@ -27,12 +27,6 @@
 
 using namespace std;
 
-struct application{
-	CFStringRef name;
-	CFStringRef path;
-	int		id;
-};
-
 
 class applicationLister{	
 	
@@ -60,9 +54,6 @@ private:
 	CFURLRef applicationsDirectoryURL;
 	
 	CFMutableArrayRef applicationBundleArray; // array of applications bundle in the Applications directory
-	
-	
-	
 	
 };
 

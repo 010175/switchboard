@@ -13,30 +13,40 @@
 #define FOLDER_WATCHER_PLIST_FILE_NAME "folderWatcher.plist"
 
 #define DEFAULT_WEB_CONSOLE_URL "http://localhost/~guillaume/monolithe_web_console/"
-//#define MONOLITHE_WEB_CONSOLE_URL "http://www.010175.net/monolithe/"
-
 #define DEFAULT_LOCATION "nowhere"
+
 
 // for NSLog
 #if __cplusplus
 extern "C" {
 #endif
+    
 	void NSLog(CFStringRef format, ...);
 	void NSLogv(CFStringRef format, va_list args);
+    
 #if __cplusplus
 }
 #endif
 
+#pragma mark globals declaration
 int activeProcessIndex = -1;
 int selectedProcessIndex = -1;
 int activeProcessIsDuplex = 0;
 
-double lastLaunchProcessTime = 0;
+CFAbsoluteTime lastLaunchProcessTime = 0;
 
 applicationLister myApplicationLister;
 launchdWrapper myLaunchdWrapper;
 
-
+//osc remote structure
+struct remote_t {
+    string name;
+    string ip;
+    CFAbsoluteTime lastPingTime;
+    ofxOscSender    sender;
+};
+// remote array
+CFMutableArrayRef remotesArray = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
 
 // 
 CFStringRef location = CFSTR(DEFAULT_LOCATION);
@@ -45,9 +55,9 @@ CFStringRef activeProcessName = NULL;
 CFStringRef duplexProcessName = NULL;
 
 // osc
-ofxOscSender	sender;
+//ofxOscSender	sender;
 ofxOscReceiver	receiver;
-string remoteIP = "";
+string          lastRemoteIp="";
 
 ofxNetworkUtils networkUtils;
 
@@ -56,14 +66,6 @@ TiXmlDocument calendar_xml("calendar.xml");
 TiXmlDocument uploads_xml("uploads.xml");
 TiXmlDocument duplex_xml;
 
-# pragma mark get systeme time 
-double getSystemTime(){
-	
-	timeval Time = {0, 0};
-	gettimeofday(&Time, NULL);
-	
-	return Time.tv_sec + Time.tv_usec / 1000000.0;
-}
 
 # pragma mark curl Send Process List call back
 size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t nmemb, void *stream){
@@ -86,25 +88,29 @@ size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t n
 	while ( (node = duplex_xml.FirstChildElement()->IterateChildren( node ) ) != 0 ) {
 		
 		element = node->ToElement();
-		
-       // printf("%s, %s,%s, %s\n", element->Attribute("name"), element->Attribute("location"),element->Attribute("active"), element->Attribute("duplex"));
-		
         if (atoi(element->Attribute("duplex"))==1){
             
             
             // Check if other location process is duplex
-            CFStringRef locationAsCFString = CFStringCreateWithCString(kCFAllocatorDefault,element->Attribute("location"),CFStringGetSystemEncoding());
+            CFStringRef locationAsCFString = CFStringCreateWithCString(
+                                                                       kCFAllocatorDefault,
+                                                                       element->Attribute("location"),CFStringGetSystemEncoding()
+                                                                       );
             
             if (CFStringCompare(location,locationAsCFString , kCFCompareCaseInsensitive)!=kCFCompareEqualTo){
-                printf("duplex %s from %s: \n", element->Attribute("name"),element->Attribute("location"));
-                duplexProcessName =  CFStringCreateWithCString(kCFAllocatorDefault,element->Attribute("name"),CFStringGetSystemEncoding());
+                
+                NSLog(CFSTR("duplex %s from %s"), element->Attribute("name"),element->Attribute("location"));
+                
+                duplexProcessName =  CFStringCreateWithCString(
+                                                               kCFAllocatorDefault,
+                                                               element->Attribute("name"),
+                                                               CFStringGetSystemEncoding()
+                                                               );
             }
         }
 		
 		++count;
 	}
-	
-	;
 	duplex_xml.Clear();
 	
 	return nmemb;
@@ -117,7 +123,7 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 	
 	if ( calendar_xml.Error() )
 	{
-		printf("xml error %s: %i\n", calendar_xml.Value(), calendar_xml.ErrorId() );
+		NSLog(CFSTR("xml error %s: %i"), calendar_xml.Value(), calendar_xml.ErrorId() );
 		return nmemb;
 	}
 	
@@ -129,12 +135,12 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 		
 		element = node->ToElement();
 		
-		printf("%s %s %s\n", element->Attribute("timestamp"),element->Attribute("action"),element->Attribute("argument"));
+		NSLog(CFSTR("%s %s %s"), element->Attribute("timestamp"),element->Attribute("action"),element->Attribute("argument"));
 		
 		if (strcmp(element->Attribute("action"),"launch_now")==0){
 			int desire_process_index = atoi(element->Attribute("argument"));
 			
-			printf("%s %i\n",element->Attribute("action"),atoi(element->Attribute("argument")));
+			NSLog(CFSTR("%s %i"),element->Attribute("action"),atoi(element->Attribute("argument")));
 			
 			if ((desire_process_index>-1)&&(desire_process_index!=activeProcessIndex)){
 				
@@ -160,13 +166,13 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 				
 				doFadeOperation(CleanScreen, 0.2f, true); // fade out
 				sendProcessListToWebConsole();
-               
+                
 			}
 		}
 		++count;
 	}
 	
-	printf("Clalendar updated %i events\n", count);
+	NSLog(CFSTR("Clalendar updated %i events"), count);
 	calendar_xml.Clear();
 	
 	return nmemb;
@@ -317,47 +323,81 @@ void getCalendarFromWebConsole(){
 # pragma mark process waiting osc messages
 void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 {
-	//printf("osc timer function");
+    // remove timed out remote
+    CFIndex idx = 0;
+    CFIndex currentRemoteIndex = -1;
+    
+    while (idx !=  CFArrayGetCount(remotesArray)){
+        struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,idx); 
+        CFTimeInterval pingAge =  CFAbsoluteTimeGetCurrent () -aRemote->lastPingTime;
+        if (pingAge > 10){
+            NSLog(CFSTR("remove remote %s"),aRemote->ip.c_str() );
+            CFArraySetValueAtIndex(remotesArray, idx, NULL);
+            CFArrayRemoveValueAtIndex(remotesArray, idx);
+        }
+        else idx++;
+    } 
+    
 	while( receiver.hasWaitingMessages() )
 	{
-		        
-		time_t rawtime;
-		struct tm * timeinfo;
-		
-		time ( &rawtime );
-		timeinfo = localtime ( &rawtime );
-		
 		ofxOscMessage rm;
 		receiver.getNextMessage( &rm );
 		
-        if (rm.getRemoteIp()!=remoteIP){
-            printf("setting up remote ip\n");
-            remoteIP = rm.getRemoteIp();
-            sender.setup(remoteIP, _SENDER_PORT);// reset sender remote ip
+        // remote array stuff
+        string remoteIp = rm.getRemoteIp();
+        CFIndex remoteCount =  CFArrayGetCount(remotesArray);
+        
+        for (int i = 0; i<remoteCount;i++){
+            struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
+            string anIp =aRemote->ip;
+            
+            if (remoteIp.compare(anIp)==0) {
+                //update remote last ping time
+                currentRemoteIndex = i;
+                aRemote->lastPingTime = CFAbsoluteTimeGetCurrent ();
+                // NSLog(CFSTR("update remote %s"), anIp .c_str());
+            }
         }
         
-		printf("%.2i:%.2i:%.2i @%s : %s\n", timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec,rm.getRemoteIp().c_str(), rm.getAddress().c_str());
-		
+        if (currentRemoteIndex==-1){ // new remote
+            struct remote_t *newRemote = new remote_t;
+            if (newRemote!=NULL){
+                newRemote->ip = remoteIp;
+                newRemote->lastPingTime = CFAbsoluteTimeGetCurrent();
+                newRemote->name = "no name";
+                newRemote->sender.setup(remoteIp, _SENDER_PORT);
+                
+                CFArrayAppendValue(remotesArray, newRemote);
+                NSLog(CFSTR("new remote : %s"), newRemote->ip.c_str() );
+                
+                currentRemoteIndex = remoteCount;
+            } else{
+                NSLog(CFSTR("Error creating new remote"));
+            }
+        }
+        
 # pragma mark osc ping
+        
+        struct remote_t *currentRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,currentRemoteIndex); 
+        
 		if ( rm.getAddress() == "/monolithe/ping" )
 		{
 			ofxOscMessage sm;
 			
 			sm.setAddress("/monolithe/pong"); // pong back to remote
 			sm.addStringArg(networkUtils.getInterfaceAddress(0));
-			sender.sendMessage(sm);
+			currentRemote->sender.sendMessage(sm);
 			
             // send duplex message if needed
             if (duplexProcessName!=NULL){
-                sm.setAddress("/monolithe/callme"); // pong back to remote
-                
+                sm.setAddress("/monolithe/callme");
                 char *bytes;
                 CFIndex length = CFStringGetLength(duplexProcessName);
                 bytes = (char *)malloc( length + 1 );
                 bytes = (char*)CFStringGetCStringPtr(duplexProcessName,CFStringGetSystemEncoding());
                 
                 sm.addStringArg(string(bytes));
-                sender.sendMessage(sm);
+                currentRemote->sender.sendMessage(sm);
             }
 			break;
 		}
@@ -367,11 +407,12 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 # pragma mark osc launch
 		if ( rm.getAddress() == "/monolithe/launchprocess" )
 		{
-			double now = getSystemTime();
+			CFAbsoluteTime now = CFAbsoluteTimeGetCurrent();
 			if (now<lastLaunchProcessTime+DELAY_BEFORE_NEXT_PROCESS_LAUNCH){
-				printf("to soon, now is %f, last is %f\r", now, lastLaunchProcessTime);
+				NSLog(CFSTR("to soon, now is %f, last is %f"), now, lastLaunchProcessTime);
 				break;
 			}
+            
 			lastLaunchProcessTime = now;
 			
 			int appIndex = -1;
@@ -382,11 +423,18 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			}
 			else if (rm.getArgType(0)== OFXOSC_TYPE_STRING){ // app by name
 				appName = rm.getArgAsString( 0 );
-				appIndex = myApplicationLister.getApplicationIndex(CFStringCreateWithCString(kCFAllocatorDefault, appName.c_str(), kCFStringEncodingUTF8));
+				appIndex = myApplicationLister.getApplicationIndex(
+                                                                   CFStringCreateWithCString(
+                                                                                             kCFAllocatorDefault, 
+                                                                                             appName.c_str(),
+                                                                                             kCFStringEncodingUTF8
+                                                                                             )
+                                                                   );
 				
 			}
 			
 			if (appIndex == activeProcessIndex) break; // don't relaunch current app
+			if (appIndex == -1) break; // don't relaunch current app
 			
 			// hide mouse cursor
 			CGDisplayHideCursor (kCGDirectMainDisplay);
@@ -410,11 +458,14 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				doFadeOperation(CleanScreen, 2.0f, true); // fade out
 				return;
 			}
-                    
+            
 			myLaunchdWrapper.submitProcess(PROCESS_LABEL, filePath);
 			activeProcessIndex = appIndex;
 			activeProcessName = myApplicationLister.getApplicationName(appIndex);
 			
+            
+            NSLog(CFSTR("Starting process %@"),activeProcessName);
+            
 			// get duplex status
 			CFMutableStringRef appDuplexFilePath= CFStringCreateMutable(NULL, 0);
 			
@@ -441,11 +492,10 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			// check if duplex file or directory exist
 			struct stat st;
 			if(stat(duplexFilePath,&st) == 0){
-				printf("process is duplex\n");
+				NSLog(CFSTR("Process is duplex !\n"));
 				activeProcessIsDuplex = true;
 				
 			} else {
-				printf("process is not duplex\n");
 				activeProcessIsDuplex= false;
 			}
 			// end duplex status
@@ -463,7 +513,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 			// set process to front
 			int pid = myLaunchdWrapper.getPIDForProcessLabel(PROCESS_LABEL);
-			printf("pid is %i\r", pid);
+			//printf("pid is %i\r", pid);
 			
 			ProcessSerialNumber psn;
 			GetProcessForPID (
@@ -471,9 +521,20 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 							  &psn
 							  );
 			
-			OSErr er = SetFrontProcess(&psn);
-			printf("error ? %i\r", er);
+			OSErr err = SetFrontProcess(&psn);
+            if(err) NSLog(CFSTR("Error set front process"));
+			//printf("error ? %i\r", er);
 			
+            // send back process index to all remotes
+            ofxOscMessage sm;
+			sm.setAddress("/monolithe/setprocessindex");
+			sm.addIntArg(activeProcessIndex);	
+            
+            CFIndex remoteCount =  CFArrayGetCount(remotesArray);
+            for (int i = 0; i<remoteCount;i++){
+                struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
+                aRemote->sender.sendMessage(sm);
+            }
 			sendProcessListToWebConsoleThread.start();
 			
 			break;
@@ -510,11 +571,11 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 					sm.addStringArg(filePath);
 					
 				} else {
-					printf("error while getting application name\r");
+					NSLog(CFSTR("error getting process name"));
 				}					
 			}
 			
-			sender.sendMessage(sm);
+			currentRemote->sender.sendMessage(sm);
 			
 			break;
 		}
@@ -527,8 +588,43 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			sm.setAddress("/monolithe/setprocessindex");
 			sm.addIntArg(activeProcessIndex);	
 			
-			sender.sendMessage(sm);
+			currentRemote->sender.sendMessage(sm);
+            
+			break;
+			
+		}
+        
+		// send current process name
+# pragma mark osc process name
+		if ( rm.getAddress() == "/monolithe/getprocessname" ) 
+		{
+			ofxOscMessage sm;
+			sm.setAddress("/monolithe/setprocessname");
+			
+            // CFStringRef to CString complicated mess
+            CFIndex          nameLength;
+            Boolean          success;
+            
+            CFStringRef appName = myApplicationLister.getApplicationName(activeProcessIndex);
+            
+            if (appName == NULL) // double check if app name is not null.
+                appName = CFSTR("Unnamed App");
+            
+            nameLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appName), kCFStringEncodingASCII);
+            
+            char             filePath[FILENAME_MAX]; // buffer[nameLength+1];
+            assert(filePath != NULL);
+            
+            success = CFStringGetCString(appName, filePath, FILENAME_MAX, kCFStringEncodingASCII);
+            
+            if (success){
+                sm.addStringArg(filePath);
                 
+            } else {
+                NSLog(CFSTR("error getting process name"));
+            }					
+			currentRemote->sender.sendMessage(sm);
+            
 			break;
 			
 		}
@@ -573,14 +669,12 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			if (success){ 
 				
 				//make sure the file exists on the disk
-				printf("loading %s...\n",filePath);
+				NSLog(CFSTR("loading %s..."),filePath);
 				ifstream existanceChecker(filePath);
 				
 				if(!existanceChecker.is_open()){
-					printf("file %s not found\n",filePath);
+					NSLog(CFSTR("file %s not found"),filePath);
 					return;
-				} else {
-					printf("data file %s ok\n",filePath);
 				}
 				
 				existanceChecker.close();
@@ -602,19 +696,16 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				
 				// read data as a block:
 				inFile.read (buffer,length);
-				
 				inFile.close();
-				
-				cout << "the complete file content is in memory : " << length << "bytes\n";
 				
 				sm.addStringArg(buffer);
 				
 				delete[] buffer;
 				
-				sender.sendMessage(sm);
+				currentRemote->sender.sendMessage(sm);
 				break;
 				
-			}else printf("error getting application description\r");
+			}else NSLog(CFSTR("error getting application description"));
 			
 		}					
 		
@@ -622,10 +713,10 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 # pragma mark osc process description
 		if ( rm.getAddress() == "/monolithe/getallprocessdescriptions" )	
 		{
-
+            
           	//ofxOscBundle sb;
             
-            printf("get all %i process\n",myApplicationLister.getApplicationCount());
+            //printf("get all %i process\n",myApplicationLister.getApplicationCount());
             
 			for (int i = 0; i<myApplicationLister.getApplicationCount();i++){
                 
@@ -664,14 +755,12 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                 if (success){ 
                     
                     //make sure the file exists on the disk
-                    printf("loading %s...\n",filePath);
+                    NSLog(CFSTR("loading %s..."),filePath);
                     ifstream existanceChecker(filePath);
                     
                     if(!existanceChecker.is_open()){
-                        printf("file %s not found\n",filePath);
-                         continue;
-                    } else {
-                        printf("data file %s ok\n",filePath);
+                        NSLog(CFSTR("file %s not found"),filePath);
+                        continue;
                     }
                     
                     existanceChecker.close();
@@ -681,7 +770,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                     
                     std::ifstream inFile(filePath,ios::in|ios::binary|ios::ate);
                     if (!inFile.is_open())
-                         continue;
+                        continue;
                     
                     // get length of file:
                     inFile.seekg (0, ios::end);
@@ -696,19 +785,15 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                     
                     inFile.close();
                     
-                    cout << "the complete file content is in memory : " << length << "bytes\n";
-                    
                     sm.addStringArg(buffer);
                     
                     delete[] buffer;
                     
-                    sender.sendMessage(sm);
-                   
+                    currentRemote->sender.sendMessage(sm);
                     
-                }else printf("error getting application description\r");
+                    
+                }else NSLog(CFSTR("error getting application description"));
 			}
-            printf("sending process description bundle\n");
-           // sender.sendBundle(sb);
             break;
         }
 		// stop current process
@@ -720,23 +805,55 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			activeProcessIndex = -1;
 			activeProcessName = NULL;
             
+            // send back process index to all remotes
+            ofxOscMessage sm;
+			sm.setAddress("/monolithe/setprocessindex");
+			sm.addIntArg(activeProcessIndex);	
+            
+            CFIndex remoteCount =  CFArrayGetCount(remotesArray);
+            for (int i = 0; i<remoteCount;i++){
+                struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
+                aRemote->sender.sendMessage(sm);
+            }
+            
 			sendProcessListToWebConsoleThread.start();
-			
 			break;
-			
 		}
 		
 		// new application aviable
 		if ( rm.getAddress() == "/monolithe/newapplication" ) 
 		{
 			
-			ofxOscMessage sm;
+            // send back process index to all remotes
+            ofxOscMessage sm;
 			sm.setAddress("/monolithe/setprocessindex");
 			sm.addIntArg(activeProcessIndex);	
+            
+            CFIndex remoteCount =  CFArrayGetCount(remotesArray);
+            for (int i = 0; i<remoteCount;i++){
+                struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
+                aRemote->sender.sendMessage(sm);
+            }
+            
+			sendProcessListToWebConsoleThread.start();
+			break;
 			
+		}
+        
+        if ( rm.getAddress() == "/monolithe/reset" ) 
+		{
 			
-			sender.sendMessage(sm);
-			
+            // send back reset to all remotes
+            ofxOscMessage sm;
+			sm.setAddress("/monolithe/reset");
+			sm.addIntArg(activeProcessIndex);	
+            
+            CFIndex remoteCount =  CFArrayGetCount(remotesArray);
+            for (int i = 0; i<remoteCount;i++){
+                struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
+                aRemote->sender.sendMessage(sm);
+            }
+            
 			sendProcessListToWebConsoleThread.start();
 			break;
 			
@@ -848,13 +965,15 @@ void readPreferences()
 	}
 	
 	
-	NSLog(CFSTR("location : %@"), location);
+	NSLog(CFSTR("Location : %@"), location);
 	NSLog(CFSTR("Web Console URL : %@"), webConsoleURL);
     
 }
 
 # pragma mark main
 int main (int argc, const char * argv[]) {
+    
+    NSLog(CFSTR("\n\n--------------------------\nWelcome to the SwitchBoard\n--------------------------\n"));
 	// Set up a signal handler so we can clean up when we're interrupted from the command line
 	InstallExceptionHandler();
 	
@@ -889,7 +1008,7 @@ int main (int argc, const char * argv[]) {
 	// Unload running switchboard launchd process
 	myLaunchdWrapper.removeProcess(PROCESS_LABEL);
 	
-	NSLog(CFSTR("END"));
+	NSLog(CFSTR("Switchboard END"));
 	return 0;
 }
 

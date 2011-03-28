@@ -36,8 +36,11 @@
       displayScale = "1.00"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug">
-      <BuildableProductRunnable>
+      buildConfiguration = "Release">
+      <PathRunnable
+         FilePath = "/Users/guillaume/Usine/[build]/Release/Switchboard">
+      </PathRunnable>
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8DD76F740486A8DE00D96B5E"
@@ -45,7 +48,7 @@
             BlueprintName = "Switchboard"
             ReferencedContainer = "container:Switchboard.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
