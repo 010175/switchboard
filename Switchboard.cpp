@@ -3,8 +3,8 @@
 
 #define CFReleaseIfNotNULL(cf) if( cf ) CFRelease(cf);
 #define CURL_UPDATE_INTERVAL 1
-#define _SENDER_PORT 4444
-#define _RECEIVER_PORT 5555
+#define OSC_SENDER_PORT 4444
+#define OSC_RECEIVER_PORT 5555
 #define DELAY_BEFORE_NEXT_PROCESS_LAUNCH 5
 
 #define PROCESS_LABEL "org.monolithe.process"
@@ -20,7 +20,6 @@
 #if __cplusplus
 extern "C" {
 #endif
-    
 	void NSLog(CFStringRef format, ...);
 	void NSLogv(CFStringRef format, va_list args);
     
@@ -43,7 +42,7 @@ struct remote_t {
     string name;
     string ip;
     CFAbsoluteTime lastPingTime;
-    ofxOscSender    sender;
+    ofxOscSender    osc_sender;
 };
 // remote array
 CFMutableArrayRef remotesArray = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
@@ -55,8 +54,7 @@ CFStringRef activeProcessName = NULL;
 CFStringRef duplexProcessName = NULL;
 
 // osc
-//ofxOscSender	sender;
-ofxOscReceiver	receiver;
+ofxOscReceiver	osc_receiver;
 string          lastRemoteIp="";
 
 ofxNetworkUtils networkUtils;
@@ -243,6 +241,8 @@ void sendProcessListToWebConsole(){
                      CURLFORM_COPYNAME, "process_active_name",
                      CURLFORM_COPYCONTENTS, activeProcessNameAsBytes, CURLFORM_END);
         
+        //free(activeProcessNameAsBytes);
+        
     } else {
        	curl_formadd(&post, &last,
                      CURLFORM_COPYNAME, "process_active_name",
@@ -265,7 +265,8 @@ void sendProcessListToWebConsole(){
 				 CURLFORM_COPYNAME, "location",
 				 CURLFORM_COPYCONTENTS, locationAsBytes, CURLFORM_END);
 	
-	
+	//free(locationAsBytes);
+    
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "process_list_submit",
 				 CURLFORM_COPYCONTENTS, "submit", CURLFORM_END);
@@ -282,6 +283,8 @@ void sendProcessListToWebConsole(){
 	curl_easy_setopt(hnd, CURLOPT_HTTPPOST, post);
 	curl_easy_setopt(hnd, CURLOPT_URL, webConsoleURLAsBytes);
 	
+    //free(webConsoleURLAsBytes);
+    
 	ret = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
 	
@@ -331,17 +334,17 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
         struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,idx); 
         CFTimeInterval pingAge =  CFAbsoluteTimeGetCurrent () -aRemote->lastPingTime;
         if (pingAge > 10){
-            NSLog(CFSTR("remove remote %s"),aRemote->ip.c_str() );
+            NSLog(CFSTR("remove remote: %s"),aRemote->ip.c_str() );
             CFArraySetValueAtIndex(remotesArray, idx, NULL);
             CFArrayRemoveValueAtIndex(remotesArray, idx);
         }
         else idx++;
     } 
     
-	while( receiver.hasWaitingMessages() )
+	while( osc_receiver.hasWaitingMessages() )
 	{
 		ofxOscMessage rm;
-		receiver.getNextMessage( &rm );
+		osc_receiver.getNextMessage( &rm );
 		
         // remote array stuff
         string remoteIp = rm.getRemoteIp();
@@ -365,10 +368,10 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                 newRemote->ip = remoteIp;
                 newRemote->lastPingTime = CFAbsoluteTimeGetCurrent();
                 newRemote->name = "no name";
-                newRemote->sender.setup(remoteIp, _SENDER_PORT);
+                newRemote->osc_sender.setup(remoteIp, OSC_SENDER_PORT);
                 
                 CFArrayAppendValue(remotesArray, newRemote);
-                NSLog(CFSTR("new remote : %s"), newRemote->ip.c_str() );
+                NSLog(CFSTR("new remote: %s"), newRemote->ip.c_str() );
                 
                 currentRemoteIndex = remoteCount;
             } else{
@@ -386,22 +389,48 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
 			sm.setAddress("/monolithe/pong"); // pong back to remote
 			sm.addStringArg(networkUtils.getInterfaceAddress(0));
-			currentRemote->sender.sendMessage(sm);
+			currentRemote->osc_sender.sendMessage(sm);
 			
             // send duplex message if needed
             if (duplexProcessName!=NULL){
                 sm.setAddress("/monolithe/callme");
                 char *bytes;
                 CFIndex length = CFStringGetLength(duplexProcessName);
-                bytes = (char *)malloc( length + 1 );
+                bytes = (char*)malloc( length + 1 );
                 bytes = (char*)CFStringGetCStringPtr(duplexProcessName,CFStringGetSystemEncoding());
                 
                 sm.addStringArg(string(bytes));
-                currentRemote->sender.sendMessage(sm);
+                currentRemote->osc_sender.sendMessage(sm);
             }
 			break;
 		}
 		
+        if ( rm.getAddress() == "/monolithe/whereami" )
+		{
+           
+            // CFString to c_string
+            CFStringEncoding encodingMethod;
+            encodingMethod = CFStringGetSystemEncoding();
+            
+            
+            char *locationAsBytes;
+            CFIndex locationLength = CFStringGetLength(location);
+            locationAsBytes = (char *)malloc( locationLength + 1 );
+            locationAsBytes = (char*)CFStringGetCStringPtr(location, encodingMethod);
+            
+            string s = locationAsBytes;
+            
+            //free (locationAsBytes);
+            
+            ofxOscMessage sm;
+			
+			sm.setAddress("/monolithe/whereyouare"); // pong back to remote
+			sm.addStringArg(s);
+			currentRemote->osc_sender.sendMessage(sm);
+            
+            break;
+            
+        }
 		
 		// launch
 # pragma mark osc launch
@@ -529,11 +558,11 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
             ofxOscMessage sm;
 			sm.setAddress("/monolithe/setprocessindex");
 			sm.addIntArg(activeProcessIndex);	
-            
+
             CFIndex remoteCount =  CFArrayGetCount(remotesArray);
             for (int i = 0; i<remoteCount;i++){
                 struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
-                aRemote->sender.sendMessage(sm);
+                aRemote->osc_sender.sendMessage(sm);
             }
 			sendProcessListToWebConsoleThread.start();
 			
@@ -575,7 +604,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				}					
 			}
 			
-			currentRemote->sender.sendMessage(sm);
+			currentRemote->osc_sender.sendMessage(sm);
 			
 			break;
 		}
@@ -588,7 +617,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			sm.setAddress("/monolithe/setprocessindex");
 			sm.addIntArg(activeProcessIndex);	
 			
-			currentRemote->sender.sendMessage(sm);
+			currentRemote->osc_sender.sendMessage(sm);
             
 			break;
 			
@@ -623,7 +652,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
             } else {
                 NSLog(CFSTR("error getting process name"));
             }					
-			currentRemote->sender.sendMessage(sm);
+			currentRemote->osc_sender.sendMessage(sm);
             
 			break;
 			
@@ -702,7 +731,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				
 				delete[] buffer;
 				
-				currentRemote->sender.sendMessage(sm);
+				currentRemote->osc_sender.sendMessage(sm);
 				break;
 				
 			}else NSLog(CFSTR("error getting application description"));
@@ -789,7 +818,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                     
                     delete[] buffer;
                     
-                    currentRemote->sender.sendMessage(sm);
+                    currentRemote->osc_sender.sendMessage(sm);
                     
                     
                 }else NSLog(CFSTR("error getting application description"));
@@ -813,7 +842,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
             CFIndex remoteCount =  CFArrayGetCount(remotesArray);
             for (int i = 0; i<remoteCount;i++){
                 struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
-                aRemote->sender.sendMessage(sm);
+                aRemote->osc_sender.sendMessage(sm);
             }
             
 			sendProcessListToWebConsoleThread.start();
@@ -832,7 +861,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
             CFIndex remoteCount =  CFArrayGetCount(remotesArray);
             for (int i = 0; i<remoteCount;i++){
                 struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
-                aRemote->sender.sendMessage(sm);
+                aRemote->osc_sender.sendMessage(sm);
             }
             
 			sendProcessListToWebConsoleThread.start();
@@ -851,7 +880,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
             CFIndex remoteCount =  CFArrayGetCount(remotesArray);
             for (int i = 0; i<remoteCount;i++){
                 struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
-                aRemote->sender.sendMessage(sm);
+                aRemote->osc_sender.sendMessage(sm);
             }
             
 			sendProcessListToWebConsoleThread.start();
@@ -994,7 +1023,7 @@ int main (int argc, const char * argv[]) {
 	networkUtils.init();
 	
 	// Init osc receiver
-	receiver.setup(_RECEIVER_PORT);
+	osc_receiver.setup(OSC_RECEIVER_PORT);
 	
 	// unload running switchboard launchd process
 	myLaunchdWrapper.removeProcess(PROCESS_LABEL);
