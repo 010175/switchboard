@@ -52,7 +52,7 @@ CFStringRef location = CFSTR(DEFAULT_LOCATION);
 CFStringRef webConsoleURL = CFSTR(DEFAULT_WEB_CONSOLE_URL);
 CFStringRef activeProcessName = NULL;
 CFStringRef duplexProcessName = NULL;
-
+CFStringRef duplexProcessLocation = NULL;
 // osc
 ofxOscReceiver	osc_receiver;
 string          lastRemoteIp="";
@@ -72,9 +72,11 @@ size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t n
     
 	if ( duplex_xml.Error() )
 	{
-		printf("xml error %s: %i\n", duplex_xml.Value(), duplex_xml.ErrorId() );
+		NSLog(CFSTR("duplex xml error %s: %i"), duplex_xml.Value(), duplex_xml.ErrorId() );
 		return nmemb;
-	}
+	} else {
+       // NSLog(CFSTR("duplex xml ok")); 
+    }
 	
 	int count = 0;
 	
@@ -82,13 +84,13 @@ size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t n
 	TiXmlElement* element = 0;
     
     duplexProcessName = NULL;
-    
+    duplexProcessLocation = NULL;
 	while ( (node = duplex_xml.FirstChildElement()->IterateChildren( node ) ) != 0 ) {
 		
 		element = node->ToElement();
         if (atoi(element->Attribute("duplex"))==1){
             
-            
+          //  NSLog(CFSTR("got duplex attribute"));
             // Check if other location process is duplex
             CFStringRef locationAsCFString = CFStringCreateWithCString(
                                                                        kCFAllocatorDefault,
@@ -96,19 +98,40 @@ size_t curlSendProcessListToWebConsoleCallBack( void *ptr, size_t size, size_t n
                                                                        );
             
             if (CFStringCompare(location,locationAsCFString , kCFCompareCaseInsensitive)!=kCFCompareEqualTo){
-                
-                NSLog(CFSTR("duplex %s from %s"), element->Attribute("name"),element->Attribute("location"));
+            //if (1){
+                    
+               // NSLog(CFSTR("duplex %s from %s"), element->Attribute("name"),element->Attribute("location"));
                 
                 duplexProcessName =  CFStringCreateWithCString(
                                                                kCFAllocatorDefault,
                                                                element->Attribute("name"),
                                                                CFStringGetSystemEncoding()
                                                                );
+                
+                duplexProcessLocation =  CFStringCreateWithCString(
+                                                               kCFAllocatorDefault,
+                                                               element->Attribute("location"),
+                                                               CFStringGetSystemEncoding()
+                                                               );
+                
+                // send  duplex message to all remotes
+               /*
+                ofxOscMessage sm;
+                sm.setAddress("/monolithe/duplex");
+                sm.addStringArg(element->Attribute("name"));	
+                
+                CFIndex remoteCount =  CFArrayGetCount(remotesArray);
+                for (int i = 0; i<remoteCount;i++){
+                    struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
+                    aRemote->osc_sender.sendMessage(sm);
+                }*/
+                
             }
         }
 		
 		++count;
 	}
+   // NSLog(CFSTR("count is %i"), count);
 	duplex_xml.Clear();
 	
 	return nmemb;
@@ -241,7 +264,7 @@ void sendProcessListToWebConsole(){
                      CURLFORM_COPYNAME, "process_active_name",
                      CURLFORM_COPYCONTENTS, activeProcessNameAsBytes, CURLFORM_END);
         
-        //free(activeProcessNameAsBytes);
+        
         
     } else {
        	curl_formadd(&post, &last,
@@ -264,9 +287,7 @@ void sendProcessListToWebConsole(){
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "location",
 				 CURLFORM_COPYCONTENTS, locationAsBytes, CURLFORM_END);
-	
-	//free(locationAsBytes);
-    
+	    
 	curl_formadd(&post, &last,
 				 CURLFORM_COPYNAME, "process_list_submit",
 				 CURLFORM_COPYCONTENTS, "submit", CURLFORM_END);
@@ -282,14 +303,18 @@ void sendProcessListToWebConsole(){
 	
 	curl_easy_setopt(hnd, CURLOPT_HTTPPOST, post);
 	curl_easy_setopt(hnd, CURLOPT_URL, webConsoleURLAsBytes);
-	
-    //free(webConsoleURLAsBytes);
-    
+	    
 	ret = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
 	
-	//NSLog(location);
-	//printf("%s, %s", locationAsBytes, webConsoleURLAsBytes);
+    
+    // free ?
+    /*
+     free(activeProcessNameAsBytes);
+    free(locationAsBytes);
+    free(webConsoleURLAsBytes);
+     */
+    
 }
 
 
@@ -393,13 +418,22 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			
             // send duplex message if needed
             if (duplexProcessName!=NULL){
-                sm.setAddress("/monolithe/callme");
-                char *bytes;
+                sm.clear();
+                sm.setAddress("/monolithe/duplex");
+                char *duplexProcessNameAsBytes;
                 CFIndex length = CFStringGetLength(duplexProcessName);
-                bytes = (char*)malloc( length + 1 );
-                bytes = (char*)CFStringGetCStringPtr(duplexProcessName,CFStringGetSystemEncoding());
+                duplexProcessNameAsBytes = (char*)malloc( length + 1 );
+                duplexProcessNameAsBytes = (char*)CFStringGetCStringPtr(duplexProcessName,CFStringGetSystemEncoding());
                 
-                sm.addStringArg(string(bytes));
+                char *duplexProcessLocationAsBytes;
+                length = CFStringGetLength(duplexProcessLocation);
+                duplexProcessLocationAsBytes = (char*)malloc( length + 1 );
+                duplexProcessLocationAsBytes = (char*)CFStringGetCStringPtr(duplexProcessLocation,CFStringGetSystemEncoding());
+                
+                sm.addStringArg(string(duplexProcessNameAsBytes));
+                sm.addStringArg(string(duplexProcessLocationAsBytes));
+                
+              //  printf("%s, %s\n", duplexProcessLocationAsBytes,duplexProcessNameAsBytes );
                 currentRemote->osc_sender.sendMessage(sm);
             }
 			break;
@@ -521,7 +555,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 			// check if duplex file or directory exist
 			struct stat st;
 			if(stat(duplexFilePath,&st) == 0){
-				NSLog(CFSTR("Process is duplex !\n"));
+				NSLog(CFSTR("Process is duplex !"));
 				activeProcessIsDuplex = true;
 				
 			} else {
