@@ -444,7 +444,7 @@
 				1DEB924908733DCA0010E9CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		1DEB924B08733DCA0010E9CD /* Build configuration list for PBXProject "Switchboard" */ = {
 			isa = XCConfigurationList;
@@ -453,7 +453,7 @@
 				1DEB924D08733DCA0010E9CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

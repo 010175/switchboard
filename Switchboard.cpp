@@ -1,6 +1,5 @@
 #include "Switchboard.h"
 
-
 #define CFReleaseIfNotNULL(cf) if( cf ) CFRelease(cf);
 #define CURL_UPDATE_INTERVAL 1
 #define OSC_SENDER_PORT 4444
@@ -15,7 +14,7 @@
 #define DEFAULT_WEB_CONSOLE_URL "http://localhost/~guillaume/monolithe_web_console/"
 #define DEFAULT_LOCATION "nowhere"
 
-
+// a change
 // for NSLog
 #if __cplusplus
 extern "C" {
@@ -132,7 +131,6 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 				
 				doFadeOperation(CleanScreen, 0.2f, true); // fade out
 				sendProcessListToWebConsole();
-                
 			}
 		}
 		++count;
