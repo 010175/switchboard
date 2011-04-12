@@ -2,8 +2,8 @@
 
 #define CFReleaseIfNotNULL(cf) if( cf ) CFRelease(cf);
 #define CURL_UPDATE_INTERVAL 1
-#define OSC_SENDER_PORT 4444
-#define OSC_RECEIVER_PORT 5555
+#define OSC_SEND_PORT 4444
+#define OSC_LISTEN_PORT 5555
 #define DELAY_BEFORE_NEXT_PROCESS_LAUNCH 5
 
 #define PROCESS_LABEL "org.monolithe.process"
@@ -127,14 +127,12 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 					activeProcessIndex = desire_process_index;
 					sleep(2);
 				}
-				
 				doFadeOperation(CleanScreen, 0.2f, true); // fade out
 				sendProcessListToWebConsole();
 			}
 		}
 		++count;
 	}
-	
 	NSLog(CFSTR("Clalendar updated %i events"), count);
 	calendar_xml.Clear();
 	
@@ -179,8 +177,7 @@ void sendProcessListToWebConsole(){
 		
 	}
 	
-	
-	char idch[4];
+    char idch[4];
 	sprintf(idch, "%i",activeProcessIndex);
 	
 	char duplexch[4];
@@ -250,9 +247,7 @@ void sendProcessListToWebConsole(){
     
     // parse xml
     duplex_xml.Parse(curlWriteBuffer.c_str());
-    
-   // printf("\n\n\nxml is : %s\n\n\n", curlWriteBuffer.c_str());
-    
+        
 	if ( duplex_xml.Error() )
 	{
 		NSLog(CFSTR("duplex xml error %s"), duplex_xml.Value(), duplex_xml.ErrorId() );
@@ -298,7 +293,6 @@ void sendProcessListToWebConsole(){
                                                                    element->Attribute("location"),
                                                                    CFStringGetSystemEncoding()
                                                                    );
-                
             }
         }
 		
@@ -352,7 +346,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
         CFTimeInterval pingAge =  CFAbsoluteTimeGetCurrent () -aRemote->lastPingTime;
         if (pingAge > 10){
             NSLog(CFSTR("remove remote: %s"),aRemote->ip.c_str() );
-            CFArraySetValueAtIndex(remotesArray, idx, NULL);
+            //CFArraySetValueAtIndex(remotesArray, idx, NULL);
             CFArrayRemoveValueAtIndex(remotesArray, idx);
         }
         else idx++;
@@ -385,7 +379,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                 newRemote->ip = remoteIp;
                 newRemote->lastPingTime = CFAbsoluteTimeGetCurrent();
                 newRemote->name = "no name";
-                newRemote->osc_sender.setup(remoteIp, OSC_SENDER_PORT);
+                newRemote->osc_sender.setup(remoteIp, OSC_SEND_PORT);
                 
                 CFArrayAppendValue(remotesArray, newRemote);
                 NSLog(CFSTR("new remote: %s"), newRemote->ip.c_str() );
@@ -453,8 +447,6 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
             locationAsBytes = (char*)CFStringGetCStringPtr(location, encodingMethod);
             
             string s = locationAsBytes;
-            
-            //free (locationAsBytes);
             
             ofxOscMessage sm;
 			
@@ -769,16 +761,12 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				break;
 				
 			}else NSLog(CFSTR("error getting application description"));
-			
 		}					
 		
         
 # pragma mark osc process description
 		if ( rm.getAddress() == "/monolithe/getallprocessdescriptions" )	
 		{
-            
-          	//ofxOscBundle sb;
-            
             //printf("get all %i process\n",myApplicationLister.getApplicationCount());
             
 			for (int i = 0; i<myApplicationLister.getApplicationCount();i++){
@@ -919,9 +907,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
             
 			sendProcessListToWebConsoleThread.start();
 			break;
-			
 		}
-		
 	}
 }
 
@@ -951,7 +937,6 @@ void SignalHandler(int signal)
 		
 		exit(1);
 	}
-	
 }
 
 
@@ -979,8 +964,7 @@ void InstallExceptionHandler()
 
 # pragma mark preferences
 void readPreferences()
-{
-	
+{	
 	OSStatus err;
 	// build url to xml pref file
     CFBundleRef mainBundle = CFBundleGetMainBundle();
@@ -1035,7 +1019,7 @@ void readPreferences()
 
 # pragma mark main
 int main (int argc, const char * argv[]) {
-    
+   
     NSLog(CFSTR("\n\n--------------------------\nWelcome to the SwitchBoard\n--------------------------\n"));
 	// Set up a signal handler so we can clean up when we're interrupted from the command line
 	InstallExceptionHandler();
@@ -1057,11 +1041,10 @@ int main (int argc, const char * argv[]) {
 	CFRunLoopAddTimer(mRunLoopRef, webConsoleTimer, kCFRunLoopDefaultMode);
 	
 	// Init osc receiver
-	osc_receiver.setup(OSC_RECEIVER_PORT);
+	osc_receiver.setup(OSC_LISTEN_PORT);
 	
-	// unload running switchboard launchd process
+	// Unload running switchboard launchd process
 	myLaunchdWrapper.removeProcess(PROCESS_LABEL);
-	
 	
 	// Start the loop
 	CFRunLoopRun();
