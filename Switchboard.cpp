@@ -14,7 +14,6 @@
 #define DEFAULT_WEB_CONSOLE_URL "http://localhost/~guillaume/monolithe_web_console/"
 #define DEFAULT_LOCATION "nowhere"
 
-// a change
 // for NSLog
 #if __cplusplus
 extern "C" {
@@ -70,7 +69,7 @@ string curlWriteBuffer = "";
 # pragma mark curl Send Process List write function
 size_t curlSendProcessListToWebConsoleWriteFunction( void *ptr, size_t size, size_t nmemb, void *stream){
 	
-    NSLog(CFSTR("curl write function"));
+   // NSLog(CFSTR("curl write function"));
     if (stream == NULL)
         return 0;
     
