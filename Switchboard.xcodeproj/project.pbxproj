@@ -15,7 +15,6 @@
 		F00A26AA1190460D00E9BCDF /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F00A269B1190460D00E9BCDF /* tinyxmlparser.cpp */; };
 		F00A280611907C0500E9BCDF /* ofxNetworkUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F00A280411907C0500E9BCDF /* ofxNetworkUtils.cpp */; };
 		F010D76710E907FC00342293 /* applicationLister.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F010D76610E907FC00342293 /* applicationLister.cpp */; };
-		F010DC2E10ECDEE800342293 /* libcurses.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F010DC2D10ECDEE800342293 /* libcurses.dylib */; };
 		F024F66A10E7FAA300828192 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F024F66910E7FAA300828192 /* Security.framework */; };
 		F04701B213260A45003450E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F04701B113260A45003450E4 /* Foundation.framework */; };
 		F095A00F115A24CE0094892D /* screen_fader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F095A00E115A24CE0094892D /* screen_fader.cpp */; };
@@ -53,7 +52,6 @@
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* Switchboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Switchboard.cpp; sourceTree = "<group>"; };
 		09AB6884FE841BABC02AAC07 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
-		8DD76F7E0486A8DE00D96B5E /* Switchboard (debug) */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = "Switchboard (debug)"; path = "/Users/guillaume/Usine/[build]/Release/Switchboard (debug)"; sourceTree = "<absolute>"; };
 		F00A26921190460D00E9BCDF /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinystr.cpp; sourceTree = "<group>"; };
 		F00A26931190460D00E9BCDF /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinystr.h; sourceTree = "<group>"; };
 		F00A26941190460D00E9BCDF /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml.cpp; sourceTree = "<group>"; };
@@ -64,7 +62,6 @@
 		F00A280511907C0500E9BCDF /* ofxNetworkUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxNetworkUtils.h; sourceTree = "<group>"; };
 		F010D76510E907FC00342293 /* applicationLister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = applicationLister.h; sourceTree = "<group>"; };
 		F010D76610E907FC00342293 /* applicationLister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = applicationLister.cpp; sourceTree = "<group>"; };
-		F010DC2D10ECDEE800342293 /* libcurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurses.dylib; path = usr/lib/libcurses.dylib; sourceTree = SDKROOT; };
 		F024F66910E7FAA300828192 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		F02967E71135C9D800C5582F /* code mess */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "code mess"; sourceTree = "<group>"; };
 		F038BBA0116DE7D3008F3116 /* Switchboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Switchboard.h; sourceTree = "<group>"; };
@@ -112,6 +109,7 @@
 		F0E312EC11304260000979F7 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		F0E313031130428B000979F7 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
 		F0E313CB11304458000979F7 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
+		F0EF04CF134DA6BC00AA947E /* Switchboard (debug) */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Switchboard (debug)"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,7 +119,6 @@
 			files = (
 				8DD76F790486A8DE00D96B5E /* CoreFoundation.framework in Frameworks */,
 				F024F66A10E7FAA300828192 /* Security.framework in Frameworks */,
-				F010DC2E10ECDEE800342293 /* libcurses.dylib in Frameworks */,
 				F0E312ED11304260000979F7 /* CoreVideo.framework in Frameworks */,
 				F0E313041130428B000979F7 /* CoreServices.framework in Frameworks */,
 				F0E313CC11304458000979F7 /* ApplicationServices.framework in Frameworks */,
@@ -172,7 +169,6 @@
 			isa = PBXGroup;
 			children = (
 				F0BE070311788F1400F8E613 /* libcurl.dylib */,
-				F010DC2D10ECDEE800342293 /* libcurses.dylib */,
 				F0E313031130428B000979F7 /* CoreServices.framework */,
 				F0E313CB11304458000979F7 /* ApplicationServices.framework */,
 				F0E312EC11304260000979F7 /* CoreVideo.framework */,
@@ -186,6 +182,7 @@
 		19C28FBDFE9D53C911CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				F0EF04CF134DA6BC00AA947E /* Switchboard (debug) */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -314,7 +311,7 @@
 			name = Switchboard;
 			productInstallPath = "$(HOME)/bin";
 			productName = Switchboard;
-			productReference = 8DD76F7E0486A8DE00D96B5E /* Switchboard (debug) */;
+			productReference = F0EF04CF134DA6BC00AA947E /* Switchboard (debug) */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
