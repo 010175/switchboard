@@ -232,6 +232,8 @@
 			<key>Layout</key>
 			<array>
 				<dict>
+					<key>BecomeActive</key>
+					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -279,7 +281,9 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>39</integer>
+									<integer>27</integer>
+									<integer>1</integer>
+									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
@@ -330,22 +334,10 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>F092DC0E132A344000AC3630</string>
+										<string>F0C24F3213814D75002B4AE8</string>
 										<key>history</key>
 										<array>
-											<string>F024F79410E81A3F00828192</string>
-											<string>F010D7A410E911EF00342293</string>
-											<string>F010D7BF10E914E200342293</string>
-											<string>F010D80F10E9200F00342293</string>
-											<string>F010D85710E971CA00342293</string>
-											<string>F010D86A10E9783B00342293</string>
-											<string>F010D8D210E9FE4000342293</string>
-											<string>F010D8FA10EA479200342293</string>
-											<string>F010D9B810EB981000342293</string>
-											<string>F010DC0010ECB1D100342293</string>
-											<string>F010DC3410ECDEFD00342293</string>
 											<string>F0A1524410F4B21200BB373F</string>
-											<string>F0A153F510F4E2A800BB373F</string>
 											<string>F0E3149B113044F0000979F7</string>
 											<string>F0E316EF1131EAF8000979F7</string>
 											<string>F095A25D115A70BD0094892D</string>
@@ -354,7 +346,6 @@
 											<string>F038B916116CE9C9008F3116</string>
 											<string>F038B918116CE9C9008F3116</string>
 											<string>F038B91A116CE9C9008F3116</string>
-											<string>F038B9B0116D0787008F3116</string>
 											<string>F038BAC4116DCB89008F3116</string>
 											<string>F038BBEA116DF42F008F3116</string>
 											<string>F038BF7411724296008F3116</string>
@@ -458,7 +449,7 @@
 											<string>F047025913260DF0003450E4</string>
 											<string>F047025A13260DF0003450E4</string>
 											<string>F047025B13260DF0003450E4</string>
-											<string>F04703DA1329FA28003450E4</string>
+											<string>F092DC0E132A344000AC3630</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -480,8 +471,6 @@
 							<string>0pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -499,22 +488,10 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>F092DC0F132A344000AC3630</string>
+										<string>F0C24F3513814D75002B4AE8</string>
 										<key>history</key>
 										<array>
-											<string>F024F79410E81A3F00828192</string>
-											<string>F010D7A410E911EF00342293</string>
-											<string>F010D7BF10E914E200342293</string>
-											<string>F010D80F10E9200F00342293</string>
-											<string>F010D85710E971CA00342293</string>
-											<string>F010D86A10E9783B00342293</string>
-											<string>F010D8D210E9FE4000342293</string>
-											<string>F010D8FA10EA479200342293</string>
-											<string>F010D9B810EB981000342293</string>
-											<string>F010DC0010ECB1D100342293</string>
-											<string>F010DC3410ECDEFD00342293</string>
 											<string>F0A1524410F4B21200BB373F</string>
-											<string>F0A153F510F4E2A800BB373F</string>
 											<string>F0E3149B113044F0000979F7</string>
 											<string>F0E316EF1131EAF8000979F7</string>
 											<string>F095A25D115A70BD0094892D</string>
@@ -523,7 +500,6 @@
 											<string>F038B916116CE9C9008F3116</string>
 											<string>F038B918116CE9C9008F3116</string>
 											<string>F038B91A116CE9C9008F3116</string>
-											<string>F038B9B0116D0787008F3116</string>
 											<string>F038BAC4116DCB89008F3116</string>
 											<string>F038BBEA116DF42F008F3116</string>
 											<string>F038BF7411724296008F3116</string>
@@ -626,9 +602,9 @@
 											<string>F047025B13260DF0003450E4</string>
 											<string>F047027E1326336E003450E4</string>
 											<string>F04702A213263483003450E4</string>
-											<string>F047036F1328CFE4003450E4</string>
 											<string>F04703C813291A8B003450E4</string>
-											<string>F04703DB1329FA28003450E4</string>
+											<string>F0C24F3313814D75002B4AE8</string>
+											<string>F0C24F3413814D75002B4AE8</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -687,9 +663,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>F092DC10132A344000AC3630</string>
+				<string>F0C24F3613814D75002B4AE8</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>F092DC11132A344000AC3630</string>
+				<string>F0C24F3713814D75002B4AE8</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
@@ -828,7 +804,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1CD10A99069EF8BA00B06720</string>
 		<string>F024F6C610E7FCAD00828192</string>
 		<string>/Users/guillaume/Usine/monolithe/switchboard/Switchboard/Switchboard.xcodeproj</string>
 	</array>
@@ -910,7 +885,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>F024F6C610E7FCAD00828192</string>
-				<string>F092DC12132A344000AC3630</string>
+				<string>F0C24F3813814D75002B4AE8</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

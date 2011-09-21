@@ -6,5 +6,7 @@
 	<string>aix</string>
 	<key>Web Console URL</key>
 	<string>http://www.010175.net/monolithe/</string>
+	<key>Startup Process Name</key>
+	<string>myApp</string>
 </dict>
 </plist>

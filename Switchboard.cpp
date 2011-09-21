@@ -44,13 +44,16 @@ struct remote_t {
 };
 // remote array
 CFMutableArrayRef remotesArray = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
- 
+
 // duplex stuff
 CFStringRef location = CFSTR(DEFAULT_LOCATION);
 CFStringRef webConsoleURL = CFSTR(DEFAULT_WEB_CONSOLE_URL);
 CFStringRef activeProcessName = NULL;
 CFStringRef duplexProcessName = NULL;
 CFStringRef duplexProcessLocation = NULL;
+
+// startup process
+CFStringRef startupProcessName = NULL;
 
 // osc
 ofxOscReceiver	osc_receiver;
@@ -69,7 +72,7 @@ string curlWriteBuffer = "";
 # pragma mark curl Send Process List write function
 size_t curlSendProcessListToWebConsoleWriteFunction( void *ptr, size_t size, size_t nmemb, void *stream){
 	
-   // NSLog(CFSTR("curl write function"));
+    // NSLog(CFSTR("curl write function"));
     if (stream == NULL)
         return 0;
     
@@ -118,10 +121,18 @@ size_t curlGetCalendarCallBack( void *ptr, size_t size, size_t nmemb, void *stre
 				
 				usleep(1000000); // give some break
 				
+                // get path lenght
 				int pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appPath), kCFStringEncodingASCII);
-				char buffer[pathLength+1]; // buffer[nameLength+1];
-				assert(buffer != NULL);
-				if (CFStringGetCString(appPath, buffer, PATH_MAX, kCFStringEncodingASCII))
+				char buffer[pathLength+1];
+				
+                // CFString to C String
+                const char *ptr = CFStringGetCStringPtr(appPath, kCFStringEncodingASCII); //                      this is faster
+                if (ptr == NULL) {
+                    if (CFStringGetCString(appPath, buffer, pathLength, kCFStringEncodingASCII)) ptr = buffer; // than that
+                }
+                
+                // if ok, launch process
+				if (buffer!=NULL)
 				{
 					myLaunchdWrapper.submitProcess(PROCESS_LABEL, buffer);
 					activeProcessIndex = desire_process_index;
@@ -247,11 +258,11 @@ void sendProcessListToWebConsole(){
     
     // parse xml
     duplex_xml.Parse(curlWriteBuffer.c_str());
-        
+    
 	if ( duplex_xml.Error() )
 	{
 		NSLog(CFSTR("duplex xml error %s"), duplex_xml.Value(), duplex_xml.ErrorId() );
-       
+        
         return;
 	} 
     
@@ -300,7 +311,7 @@ void sendProcessListToWebConsole(){
 	}
     // NSLog(CFSTR("count is %i"), count);
 	duplex_xml.Clear();
-        
+    
 }
 
 
@@ -334,6 +345,115 @@ void getCalendarFromWebConsole(){
 	ret = curl_easy_perform(hnd);
 	curl_easy_cleanup(hnd);
 }
+
+void launchProcessByIndex(int appIndex){
+    
+    if (appIndex == activeProcessIndex) return; // don't relaunch current app
+    if (appIndex == -1) return; // not valid index
+    
+    // hide mouse cursor
+    CGDisplayHideCursor (kCGDirectMainDisplay);
+    CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(1279, 799));
+    doFadeOperation(FillScreen, 0.2f, true); // fade in
+    
+    //remove current process
+    myLaunchdWrapper.removeProcess(PROCESS_LABEL);
+    
+    CFStringRef appPath = myApplicationLister.getApplicationPath(appIndex);
+    
+    if (appPath == NULL) // double check if app name is not null.
+        appPath = CFSTR("Unnamed App");
+    
+    CFIndex pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appPath), kCFStringEncodingASCII);
+    char filePath[pathLength+1]; //  PATH_MAX  ou buffer[nameLength+1];
+    assert(filePath != NULL);
+    Boolean success = CFStringGetCString(appPath, filePath, PATH_MAX, kCFStringEncodingASCII);
+    
+    if (!success) { 
+        doFadeOperation(CleanScreen, 2.0f, true); // fade out
+        return;
+    }
+    
+    myLaunchdWrapper.submitProcess(PROCESS_LABEL, filePath);
+    activeProcessIndex = appIndex;
+    activeProcessName = myApplicationLister.getApplicationName(appIndex);
+    
+    
+    NSLog(CFSTR("Starting process %@"),activeProcessName);
+    
+    // get duplex status
+    CFMutableStringRef appDuplexFilePath= CFStringCreateMutable(NULL, 0);
+    
+    if (appPath == NULL) // double check if app name is not null.
+        appPath = CFSTR("Path error");
+    
+    // build path to duplex  file (path/duplex)
+    CFStringAppend(appDuplexFilePath, myApplicationLister.getApplicationEnclosingDirectoryPath(appIndex));
+    CFStringAppend(appDuplexFilePath,CFSTR("/"));
+    CFStringAppend(appDuplexFilePath, CFSTR("duplex"));
+    
+    // lenght of path
+    pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appDuplexFilePath), kCFStringEncodingASCII);
+    
+    // check if duplex file exist
+    char  duplexFilePath[FILENAME_MAX]; // buffer[pathLength+1];
+    assert(duplexFilePath != NULL);
+    
+    // CFString to c_string
+    CFStringGetCString(appDuplexFilePath, duplexFilePath, FILENAME_MAX, kCFStringEncodingASCII);
+    
+    CFRelease(appDuplexFilePath);
+    
+    // check if duplex file or directory exist
+    struct stat st;
+    if(stat(duplexFilePath,&st) == 0){
+        NSLog(CFSTR("Process is duplex !"));
+        activeProcessIsDuplex = true;
+        
+    } else {
+        activeProcessIsDuplex= false;
+    }
+    // end duplex status
+    
+    int i=5;
+    do {
+        usleep(2000000); // give some break
+    } while ((--i)&&(!myLaunchdWrapper.isProcessRunning(PROCESS_LABEL)));
+    
+    
+    doFadeOperation(CleanScreen, 2.0f, true); // fade out
+    
+    CGDisplayHideCursor (kCGDirectMainDisplay);
+    
+    
+    // set process to front
+    int pid = myLaunchdWrapper.getPIDForProcessLabel(PROCESS_LABEL);
+    //printf("pid is %i\r", pid);
+    
+    ProcessSerialNumber psn;
+    GetProcessForPID (
+                      (long) pid,
+                      &psn
+                      );
+    
+    OSErr err = SetFrontProcess(&psn);
+    if(err) NSLog(CFSTR("Error set front process"));
+    //printf("error ? %i\r", er);
+    
+    // send back process index to all remotes
+    ofxOscMessage sm;
+    sm.setAddress("/monolithe/setprocessindex");
+    sm.addIntArg(activeProcessIndex);	
+    
+    CFIndex remoteCount =  CFArrayGetCount(remotesArray);
+    for (int i = 0; i<remoteCount;i++){
+        struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
+        aRemote->osc_sender.sendMessage(sm);
+    }
+    sendProcessListToWebConsoleThread.start();
+}
+
+
 # pragma mark process waiting osc messages
 void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 {
@@ -387,10 +507,10 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
                 currentRemoteIndex = remoteCount;
                 
                 // send a first reset message
-                ofxOscMessage   sm;
-                sm.setAddress("/monolithe/reset");
-                sm.addIntArg(0);
-                newRemote->osc_sender.sendMessage(sm);
+                // ofxOscMessage   sm;
+                //sm.setAddress("/monolithe/reset");
+                // sm.addIntArg(0);
+                //newRemote->osc_sender.sendMessage(sm);
                 
                 
             } else{
@@ -488,110 +608,7 @@ void oscMessagesTimerFunction(CFRunLoopTimerRef timer, void *info)
 				
 			}
 			
-			if (appIndex == activeProcessIndex) break; // don't relaunch current app
-			if (appIndex == -1) break; // don't relaunch current app
-			
-			// hide mouse cursor
-			CGDisplayHideCursor (kCGDirectMainDisplay);
-			CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, CGPointMake(1279, 799));
-			doFadeOperation(FillScreen, 0.2f, true); // fade in
-			
-			//remove current process
-			myLaunchdWrapper.removeProcess(PROCESS_LABEL);
-			
-			CFStringRef appPath = myApplicationLister.getApplicationPath(appIndex);
-			
-			if (appPath == NULL) // double check if app name is not null.
-				appPath = CFSTR("Unnamed App");
-			
-			CFIndex pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appPath), kCFStringEncodingASCII);
-			char filePath[pathLength+1]; //  PATH_MAX  ou buffer[nameLength+1];
-			assert(filePath != NULL);
-			Boolean success = CFStringGetCString(appPath, filePath, PATH_MAX, kCFStringEncodingASCII);
-			
-			if (!success) { 
-				doFadeOperation(CleanScreen, 2.0f, true); // fade out
-				return;
-			}
-            
-			myLaunchdWrapper.submitProcess(PROCESS_LABEL, filePath);
-			activeProcessIndex = appIndex;
-			activeProcessName = myApplicationLister.getApplicationName(appIndex);
-			
-            
-            NSLog(CFSTR("Starting process %@"),activeProcessName);
-            
-			// get duplex status
-			CFMutableStringRef appDuplexFilePath= CFStringCreateMutable(NULL, 0);
-			
-			if (appPath == NULL) // double check if app name is not null.
-				appPath = CFSTR("Path error");
-			
-			// build path to duplex  file (path/duplex)
-			CFStringAppend(appDuplexFilePath, myApplicationLister.getApplicationEnclosingDirectoryPath(appIndex));
-			CFStringAppend(appDuplexFilePath,CFSTR("/"));
-			CFStringAppend(appDuplexFilePath, CFSTR("duplex"));
-			
-			// lenght of path
-			pathLength = CFStringGetMaximumSizeForEncoding(CFStringGetLength(appDuplexFilePath), kCFStringEncodingASCII);
-			
-			// check if duplex file exist
-			char  duplexFilePath[FILENAME_MAX]; // buffer[pathLength+1];
-			assert(duplexFilePath != NULL);
-			
-			// CFString to c_string
-			CFStringGetCString(appDuplexFilePath, duplexFilePath, FILENAME_MAX, kCFStringEncodingASCII);
-			
-			CFRelease(appDuplexFilePath);
-			
-			// check if duplex file or directory exist
-			struct stat st;
-			if(stat(duplexFilePath,&st) == 0){
-				NSLog(CFSTR("Process is duplex !"));
-				activeProcessIsDuplex = true;
-				
-			} else {
-				activeProcessIsDuplex= false;
-			}
-			// end duplex status
-			
-			int i=5;
-			do {
-				usleep(2000000); // give some break
-			} while ((--i)&&(!myLaunchdWrapper.isProcessRunning(PROCESS_LABEL)));
-			
-			
-			doFadeOperation(CleanScreen, 2.0f, true); // fade out
-			
-			CGDisplayHideCursor (kCGDirectMainDisplay);
-			
-			
-			// set process to front
-			int pid = myLaunchdWrapper.getPIDForProcessLabel(PROCESS_LABEL);
-			//printf("pid is %i\r", pid);
-			
-			ProcessSerialNumber psn;
-			GetProcessForPID (
-							  (long) pid,
-							  &psn
-							  );
-			
-			OSErr err = SetFrontProcess(&psn);
-            if(err) NSLog(CFSTR("Error set front process"));
-			//printf("error ? %i\r", er);
-			
-            // send back process index to all remotes
-            ofxOscMessage sm;
-			sm.setAddress("/monolithe/setprocessindex");
-			sm.addIntArg(activeProcessIndex);	
-            
-            CFIndex remoteCount =  CFArrayGetCount(remotesArray);
-            for (int i = 0; i<remoteCount;i++){
-                struct remote_t *aRemote =(remote_t *) CFArrayGetValueAtIndex(remotesArray,i); 
-                aRemote->osc_sender.sendMessage(sm);
-            }
-			sendProcessListToWebConsoleThread.start();
-			
+			launchProcessByIndex(appIndex);
 			break;
 		}
 		
@@ -1004,6 +1021,8 @@ void readPreferences()
 			// set values from plist file if exist
 			CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Location"), (const void **)&location);
 			CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Web Console URL"), (const void **)&webConsoleURL);
+            CFDictionaryGetValueIfPresent(( CFDictionaryRef )propertyList, CFSTR("Startup Process Name"), (const void **)&startupProcessName);
+            
 			
 		}
 	}else {
@@ -1014,12 +1033,12 @@ void readPreferences()
 	
 	NSLog(CFSTR("Location : %@"), location);
 	NSLog(CFSTR("Web Console URL : %@"), webConsoleURL);
-    
+    NSLog(CFSTR("Startup Process : %@"),startupProcessName);
 }
 
 # pragma mark main
 int main (int argc, const char * argv[]) {
-   
+    
     NSLog(CFSTR("\n\n--------------------------\nWelcome to the SwitchBoard\n--------------------------\n"));
 	// Set up a signal handler so we can clean up when we're interrupted from the command line
 	InstallExceptionHandler();
@@ -1029,7 +1048,7 @@ int main (int argc, const char * argv[]) {
 	
     // Init networkUtils
 	networkUtils.init();
-        
+    
 	// Setup runLoops
 	CFRunLoopRef		mRunLoopRef;
 	mRunLoopRef = CFRunLoopGetCurrent();
@@ -1043,9 +1062,20 @@ int main (int argc, const char * argv[]) {
 	// Init osc receiver
 	osc_receiver.setup(OSC_LISTEN_PORT);
 	
-	// Unload running switchboard launchd process
+	// Unload orpheans running switchboard launchd process
 	myLaunchdWrapper.removeProcess(PROCESS_LABEL);
 	
+    
+    // launch startup process
+    
+    if (startupProcessName!=NULL){
+        
+        int appIndex = myApplicationLister.getApplicationIndex(startupProcessName);
+        launchProcessByIndex(appIndex);
+        
+        
+    }
+    
 	// Start the loop
 	CFRunLoopRun();
 	
